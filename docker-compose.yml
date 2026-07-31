@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: biglie
+      POSTGRES_PASSWORD: biglie
+      POSTGRES_DB: biglie
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U biglie"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  # One image, three process types. Each is independently scalable, which is
+  # the part of "microservices" that actually matters here; the domains stay in
+  # one codebase so a lottery settlement remains a single database transaction.
+  web:
+    build: .
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+    environment: &django_env
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+      DATABASE_URL: postgres://biglie:biglie@db:5432/biglie
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+
+  worker:
+    build: .
+    command: celery -A config worker -l info
+    environment: *django_env
+    volumes:
+      - .:/app
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+
+  beat:
+    build: .
+    command: celery -A config beat -l info
+    environment: *django_env
+    volumes:
+      - .:/app
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+
+volumes:
+  pgdata:
