@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Registrati · biglie{% endblock %}
+
+{% block content %}
+<main>
+  <h1>Crea il tuo conto</h1>
+  <p>
+    biglie gestisce denaro reale e giochi con premi. Per legge devi essere
+    maggiorenne: ti chiediamo la data di nascita adesso, non dopo il primo
+    deposito.
+  </p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <ul role="alert">
+        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+
+    {% for field in form %}
+      <p>
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<strong role="alert">{{ error }}</strong>{% endfor %}
+      </p>
+    {% endfor %}
+
+    <button type="submit">Crea il conto</button>
+  </form>
+
+  <p><a href="{% url 'identity:login' %}">Hai già un conto? Accedi</a></p>
+</main>
+{% endblock %}

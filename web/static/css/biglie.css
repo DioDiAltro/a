@@ -1,0 +1,378 @@
+/* =============================================================================
+   biglie — design system
+   =============================================================================
+   The product is a marble. Everything visual descends from that: glass depth,
+   caustic light, weight, and the specific satisfaction of something round and
+   heavy landing in a groove.
+
+   Two rules that keep a gambling-adjacent interface honest:
+
+   1. **Money is never decorative.** Balances use tabular figures at a calm
+      weight. The thrill lives in the game surfaces, not in the numbers a person
+      uses to decide what to risk.
+
+   2. **Nothing important animates on a loop.** Pulsing, breathing and drifting
+      are reserved for moments the user initiated. An interface that is
+      permanently excited is manipulative, and it also stops being exciting.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark light;
+
+  /* -- palette ------------------------------------------------------------ */
+  --ink-1000: #05060b;
+  --ink-900: #0a0c14;
+  --ink-800: #11141f;
+  --ink-700: #1a1e2e;
+  --ink-600: #262b40;
+  --ink-500: #3a4059;
+  --ink-400: #5a6180;
+  --ink-300: #8891ad;
+  --ink-200: #b9c0d4;
+  --ink-100: #e4e8f2;
+  --ink-000: #ffffff;
+
+  /* The marble itself: cobalt core, caustic cyan edge. */
+  --marble-core: #3d5afe;
+  --marble-glow: #64e9ff;
+  --marble-deep: #1a2bb8;
+
+  --gold: #ffc24b;
+  --gold-deep: #c98a11;
+  --win: #35e08a;
+  --loss: #ff5c72;
+  --charity: #ff8fc7;
+
+  /* -- semantic ----------------------------------------------------------- */
+  --bg: var(--ink-1000);
+  --bg-raised: var(--ink-900);
+  --surface: var(--ink-800);
+  --surface-hi: var(--ink-700);
+  --line: color-mix(in oklab, var(--ink-500) 45%, transparent);
+  --line-hi: color-mix(in oklab, var(--marble-glow) 25%, transparent);
+  --text: var(--ink-100);
+  --text-dim: var(--ink-300);
+  --text-faint: var(--ink-400);
+  --accent: var(--marble-core);
+  --accent-soft: color-mix(in oklab, var(--marble-core) 18%, transparent);
+
+  /* -- type --------------------------------------------------------------- */
+  --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-num: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* -- rhythm ------------------------------------------------------------- */
+  --s1: 0.25rem; --s2: 0.5rem;  --s3: 0.75rem; --s4: 1rem;
+  --s5: 1.5rem;  --s6: 2rem;    --s7: 3rem;    --s8: 4.5rem;
+
+  --r-sm: 8px; --r-md: 14px; --r-lg: 22px; --r-full: 999px;
+
+  --shadow-lift: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+  --shadow-deep: 0 2px 4px rgb(0 0 0 / 0.5), 0 24px 60px -16px rgb(0 0 0 / 0.75);
+  --glow-marble: 0 0 0 1px color-mix(in oklab, var(--marble-glow) 30%, transparent),
+                 0 0 32px -4px color-mix(in oklab, var(--marble-core) 55%, transparent);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Light theme. The marble stays the marble — only the room changes. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6fb;
+    --bg-raised: #ffffff;
+    --surface: #ffffff;
+    --surface-hi: #eef0f8;
+    --line: color-mix(in oklab, var(--ink-300) 40%, transparent);
+    --text: var(--ink-900);
+    --text-dim: var(--ink-500);
+    --text-faint: var(--ink-400);
+    --shadow-lift: 0 1px 2px rgb(16 20 40 / 0.06), 0 8px 24px -10px rgb(16 20 40 / 0.16);
+    --shadow-deep: 0 2px 8px rgb(16 20 40 / 0.08), 0 24px 60px -20px rgb(16 20 40 / 0.24);
+  }
+}
+
+:root[data-theme="light"] {
+  --bg: #f5f6fb;
+  --bg-raised: #ffffff;
+  --surface: #ffffff;
+  --surface-hi: #eef0f8;
+  --line: color-mix(in oklab, var(--ink-300) 40%, transparent);
+  --text: var(--ink-900);
+  --text-dim: var(--ink-500);
+  --text-faint: var(--ink-400);
+  --shadow-lift: 0 1px 2px rgb(16 20 40 / 0.06), 0 8px 24px -10px rgb(16 20 40 / 0.16);
+  --shadow-deep: 0 2px 8px rgb(16 20 40 / 0.08), 0 24px 60px -20px rgb(16 20 40 / 0.24);
+}
+
+:root[data-theme="dark"] { --bg: var(--ink-1000); --text: var(--ink-100); }
+
+/* =============================================================================
+   base
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+/* A single caustic wash behind everything: the light a marble throws. Fixed and
+   static, so it reads as room lighting rather than as an animation. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 15% -10%,
+      color-mix(in oklab, var(--marble-core) 16%, transparent), transparent 70%),
+    radial-gradient(50rem 36rem at 95% 5%,
+      color-mix(in oklab, var(--marble-glow) 10%, transparent), transparent 65%);
+}
+
+h1, h2, h3, h4 { line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 var(--s3); font-weight: 650; }
+h1 { font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem); letter-spacing: -0.035em; }
+h2 { font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); }
+h3 { font-size: 1.15rem; }
+p { margin: 0 0 var(--s4); color: var(--text-dim); }
+
+a { color: var(--marble-glow); text-decoration-color: color-mix(in oklab, var(--marble-glow) 40%, transparent); text-underline-offset: 3px; }
+a:hover { text-decoration-color: currentColor; }
+
+:focus-visible {
+  outline: 2px solid var(--marble-glow);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* =============================================================================
+   layout
+   ========================================================================== */
+
+.shell { max-width: 1180px; margin-inline: auto; padding-inline: var(--s5); }
+.stack > * + * { margin-top: var(--s4); }
+.stack-lg > * + * { margin-top: var(--s6); }
+.row { display: flex; gap: var(--s3); align-items: center; }
+.row-between { display: flex; gap: var(--s3); align-items: center; justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.grid { display: grid; gap: var(--s4); }
+.grid-cards { grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.section { padding-block: var(--s7); }
+
+/* =============================================================================
+   chrome
+   ========================================================================== */
+
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(16px) saturate(160%);
+  background: color-mix(in oklab, var(--bg) 78%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.topbar__inner { display: flex; align-items: center; gap: var(--s5); height: 62px; }
+
+.brand { display: inline-flex; align-items: center; gap: var(--s2); font-weight: 700; letter-spacing: -0.03em; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+.brand__marble { width: 22px; height: 22px; border-radius: 50%; background: var(--marble-core); box-shadow: var(--glow-marble); position: relative; overflow: hidden; }
+.brand__marble::after { content: ""; position: absolute; inset: 12% 45% 55% 14%; border-radius: 50%; background: rgb(255 255 255 / 0.85); filter: blur(1px); }
+
+.navlinks { display: flex; gap: var(--s2); margin-inline-start: auto; align-items: center; }
+.navlink { padding: var(--s2) var(--s3); border-radius: var(--r-sm); color: var(--text-dim); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color .16s, background .16s; }
+.navlink:hover, .navlink[aria-current="page"] { color: var(--text); background: var(--surface-hi); }
+
+/* =============================================================================
+   the balance pill — the most-read element on the site
+   ========================================================================== */
+
+.balance {
+  display: inline-flex; align-items: center; gap: var(--s2);
+  padding: var(--s2) var(--s3) var(--s2) var(--s2);
+  border-radius: var(--r-full);
+  background: var(--surface); border: 1px solid var(--line);
+  font-family: var(--font-num); font-variant-numeric: tabular-nums;
+  font-size: 0.95rem; text-decoration: none; color: var(--text);
+}
+.balance__marble { width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff 0 6%, var(--marble-glow) 14%, var(--marble-core) 52%, var(--marble-deep) 100%); flex: none; }
+
+/* The unclaimed badge. This is the number the whole product hangs on — it is
+   the user's unopened present. It gets exactly one attention-seeking treatment
+   in the entire design system, and only when the count is non-zero. */
+.badge-unclaimed {
+  min-width: 20px; height: 20px; padding-inline: 6px;
+  display: grid; place-items: center;
+  border-radius: var(--r-full);
+  background: var(--gold); color: var(--ink-1000);
+  font-size: 0.72rem; font-weight: 750; font-family: var(--font-num);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--gold) 70%, transparent);
+  animation: waiting 2.6s var(--ease-out) infinite;
+}
+@keyframes waiting {
+  0%, 72%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--gold) 65%, transparent); }
+  86%           { box-shadow: 0 0 0 7px color-mix(in oklab, var(--gold) 0%, transparent); }
+}
+
+/* =============================================================================
+   surfaces
+   ========================================================================== */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+  box-shadow: var(--shadow-lift);
+}
+.card--interactive { transition: transform .22s var(--ease-out), box-shadow .22s var(--ease-out), border-color .22s; }
+.card--interactive:hover { transform: translateY(-3px); box-shadow: var(--shadow-deep); border-color: var(--line-hi); }
+.card__label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); font-weight: 600; }
+
+/* The claim card. Every biglia that enters the platform arrives on one of
+   these, so it carries more weight than an ordinary card. */
+.claim {
+  position: relative; overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid color-mix(in oklab, var(--gold) 30%, var(--line));
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--gold) 7%, var(--surface)), var(--surface));
+  padding: var(--s5);
+}
+.claim::after {
+  content: ""; position: absolute; inset: -40% -60% auto auto; width: 18rem; height: 18rem;
+  background: radial-gradient(circle, color-mix(in oklab, var(--gold) 22%, transparent), transparent 62%);
+  pointer-events: none;
+}
+.claim__amount { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: clamp(2rem, 1.4rem + 2vw, 2.8rem); font-weight: 700; letter-spacing: -0.03em; }
+.claim__source { color: var(--text-dim); font-size: 0.9rem; }
+
+.pot { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: -0.02em; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+
+/* =============================================================================
+   controls
+   ========================================================================== */
+
+.btn {
+  --btn-bg: var(--surface-hi);
+  --btn-fg: var(--text);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  padding: var(--s3) var(--s5);
+  border: 1px solid var(--line); border-radius: var(--r-full);
+  background: var(--btn-bg); color: var(--btn-fg);
+  font: inherit; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; text-decoration: none;
+  transition: transform .12s var(--ease-out), filter .16s, box-shadow .2s;
+}
+.btn:hover { filter: brightness(1.1); }
+.btn:active { transform: scale(0.975); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.45; pointer-events: none; }
+
+.btn--primary { --btn-bg: linear-gradient(180deg, var(--marble-core), var(--marble-deep)); --btn-fg: #fff; border-color: transparent; box-shadow: var(--glow-marble); }
+.btn--ghost { --btn-bg: transparent; }
+
+/* Safe vs risky. The visual weight is deliberately *equal*: the risky path is
+   not styled as the obvious or the recommended one. A product that nudges
+   people into gambling their winnings is a different product than this one. */
+.btn--safe { --btn-bg: transparent; --btn-fg: var(--text); border-color: color-mix(in oklab, var(--win) 45%, var(--line)); }
+.btn--risk { --btn-bg: transparent; --btn-fg: var(--gold); border-color: color-mix(in oklab, var(--gold) 50%, var(--line)); }
+.btn--risk:hover { box-shadow: 0 0 24px -6px color-mix(in oklab, var(--gold) 55%, transparent); }
+
+input[type="text"], input[type="email"], input[type="password"], input[type="number"],
+input[type="date"], select, textarea {
+  width: 100%; padding: var(--s3) var(--s4);
+  background: var(--bg-raised); color: var(--text);
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  font: inherit;
+}
+label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dim); margin-bottom: var(--s1); }
+.field + .field { margin-top: var(--s4); }
+.help { font-size: 0.82rem; color: var(--text-faint); margin-top: var(--s1); }
+.errorlist { color: var(--loss); font-size: 0.85rem; list-style: none; padding: 0; margin: var(--s1) 0 0; }
+
+.chip { display: inline-flex; align-items: center; gap: var(--s1); padding: 2px var(--s2); border-radius: var(--r-full); font-size: 0.75rem; font-weight: 600; border: 1px solid var(--line); color: var(--text-dim); }
+.chip--win { color: var(--win); border-color: color-mix(in oklab, var(--win) 45%, transparent); }
+.chip--loss { color: var(--loss); border-color: color-mix(in oklab, var(--loss) 45%, transparent); }
+.chip--gold { color: var(--gold); border-color: color-mix(in oklab, var(--gold) 45%, transparent); }
+
+/* =============================================================================
+   lottery progress — "40 di 30 minime"
+   ========================================================================== */
+
+.meter { height: 10px; border-radius: var(--r-full); background: var(--surface-hi); overflow: hidden; position: relative; border: 1px solid var(--line); }
+.meter__fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--marble-core), var(--marble-glow)); transition: width .6s var(--ease-out); }
+/* Past the minimum the bar keeps growing — there is no maximum, and the design
+   has to say so rather than sitting pinned at 100%. */
+.meter__fill--over { background: linear-gradient(90deg, var(--gold-deep), var(--gold)); }
+.meter__threshold { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text-faint); }
+
+/* =============================================================================
+   game surfaces
+   ========================================================================== */
+
+.stage {
+  position: relative;
+  display: grid; place-items: center;
+  min-height: 340px;
+  border-radius: var(--r-lg);
+  background: radial-gradient(120% 90% at 50% 0%, var(--ink-800), var(--ink-1000));
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.stage canvas { display: block; max-width: 100%; height: auto; }
+
+.stage__verdict {
+  position: absolute; inset-inline: 0; bottom: var(--s5);
+  text-align: center; font-weight: 700; font-size: 1.3rem;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .3s var(--ease-out), transform .4s var(--ease-spring);
+}
+.stage__verdict[data-shown] { opacity: 1; transform: none; }
+.stage__verdict--win { color: var(--win); }
+.stage__verdict--loss { color: var(--text-dim); }
+
+/* The fairness receipt. Shown after every round, unprompted. A game that only
+   proves itself when asked is not really provably fair. */
+.receipt { font-family: var(--font-num); font-size: 0.78rem; color: var(--text-faint); word-break: break-all; line-height: 1.6; }
+.receipt dt { color: var(--text-dim); margin-top: var(--s2); }
+
+/* =============================================================================
+   charity
+   ========================================================================== */
+
+.charity-total { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: clamp(2.4rem, 1.5rem + 3.5vw, 4rem); font-weight: 700; letter-spacing: -0.04em; color: var(--charity); }
+
+/* =============================================================================
+   misc
+   ========================================================================== */
+
+.messages { list-style: none; padding: 0; margin: 0 0 var(--s5); }
+.messages li { padding: var(--s3) var(--s4); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface); margin-bottom: var(--s2); }
+.messages .warning { border-color: color-mix(in oklab, var(--gold) 45%, transparent); }
+.messages .error { border-color: color-mix(in oklab, var(--loss) 45%, transparent); }
+
+.muted { color: var(--text-dim); }
+.tiny { font-size: 0.8rem; }
+.center { text-align: center; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.footer { border-top: 1px solid var(--line); margin-top: var(--s8); padding-block: var(--s6); color: var(--text-faint); font-size: 0.85rem; }
+
+/* HTMX: a request in flight should be visible without being loud. */
+.htmx-request { opacity: 0.6; transition: opacity .12s; }
+
+/* Respect the setting. Every motion in this file is decoration on top of a
+   result the server already decided, so removing it costs the user nothing. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

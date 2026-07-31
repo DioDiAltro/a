@@ -1,0 +1,49 @@
+{% comment %}
+One unclaimed credit.
+
+The two buttons carry *equal* visual weight. It would be trivial to make
+"rischia" the bright primary and "prendile" a muted link, and it would measurably
+increase the number of people who gamble their winnings. That is exactly why the
+design does not do it: on a platform handling real money, the safe path must
+never be the one you have to look for.
+{% endcomment %}
+
+<article class="claim stack" id="credit-{{ credit.pk }}">
+  <div class="row-between wrap">
+    <div>
+      <p class="claim__source" style="margin:0">{{ credit.source_label }}</p>
+      <p class="claim__amount" style="margin:0">{{ credit.amount }}</p>
+    </div>
+
+    <div class="stack" style="text-align:right">
+      <span class="chip">{{ credit.asset }}</span>
+      <p class="tiny muted" style="margin:0">
+        scade fra <span data-countdown="{{ credit.expires_at|date:'c' }}">…</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="row wrap">
+    <form method="post"
+          action="{% url 'web:claim_safe' credit.pk %}"
+          hx-post="{% url 'web:claim_safe' credit.pk %}"
+          hx-target="#credit-{{ credit.pk }}"
+          hx-swap="outerHTML">
+      {% csrf_token %}
+      <button type="submit" class="btn btn--safe">
+        Prendile e basta
+      </button>
+    </form>
+
+    <a class="btn btn--risk" href="{% url 'web:claim_risky' credit.pk %}">
+      Rischiale
+    </a>
+  </div>
+
+  <p class="tiny muted" style="margin:0">
+    Prendendole subito trattieni l'1% di commissione. Rischiando puoi
+    moltiplicarle o perderle: i minigame restituiscono in media il 94% di quanto
+    viene puntato, ed è un dato che puoi verificare tu stesso.
+    <a href="{% url 'web:fairness' %}">Come funziona</a>
+  </p>
+</article>

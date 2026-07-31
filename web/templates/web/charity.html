@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Beneficenza · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:46rem">
+
+  <header class="stack">
+    <h1>Dove finisce il 3%</h1>
+    <p>
+      Questa pagina non ha bisogno di login e il numero qui sotto non è un
+      contatore di marketing: è il saldo reale del conto beneficenza nel libro
+      mastro, letto adesso.
+    </p>
+  </header>
+
+  <section class="card center stack">
+    <p class="card__label">Nel fondo, ora</p>
+    {% for asset, amount in pools.items %}
+      {% if amount.minor %}
+        <p class="charity-total" style="margin:0">{{ amount }}</p>
+        <p class="tiny muted" style="margin:0">{{ asset.label }}</p>
+      {% endif %}
+    {% empty %}
+      <p class="charity-total" style="margin:0">0</p>
+    {% endfor %}
+  </section>
+
+  <section class="card stack">
+    <h2>Come viene calcolato</h2>
+    <p>
+      Il 3% si applica ai <strong>ricavi della piattaforma</strong> — commissioni,
+      margine dei giochi, rake delle sfide — non al volume transato.
+    </p>
+    <p class="tiny muted">
+      La differenza conta, quindi la scriviamo. Su una vendita da 100 biglie la
+      piattaforma incassa 5 biglie di commissione: il 3% del volume sarebbero 3
+      biglie su 5, e su gran parte delle transazioni il sito pagherebbe per
+      operare. Un sito che chiude versa zero. Applicato ai ricavi, il prelievo è
+      sostenibile e quindi ricorrente.
+    </p>
+    <p class="tiny muted">
+      Il prelievo avviene nella stessa transazione che registra il ricavo, non
+      con un lavoro notturno. Per questo il numero qui sopra non può divergere
+      da quello che è realmente successo.
+    </p>
+  </section>
+
+</div>
+{% endblock %}

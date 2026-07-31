@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}La tua bacheca · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+
+  <header class="stack">
+    <h1>Bacheca</h1>
+    {% if has_credits %}
+      <p>
+        Hai {{ wallet.unclaimed_count }} riscatt{{ wallet.unclaimed_count|pluralize:"o,i" }} in attesa.
+        Per ognuno scegli: <strong>prendile e basta</strong>, oppure <strong>rischiale</strong>
+        e lascia decidere a un minigame.
+      </p>
+    {% endif %}
+  </header>
+
+  {# ---------------------------------------------------------------------
+     Balances. Calm on purpose: this is the number people use to decide what
+     to risk, so it gets tabular figures and no animation whatsoever.
+     --------------------------------------------------------------------- #}
+  <section class="grid grid-cards" aria-label="Il tuo saldo">
+    {% for asset, amount in wallet.balances.items %}
+      <div class="card">
+        <p class="card__label">{{ asset.label }}</p>
+        <p class="pot" style="font-size:1.8rem">{{ amount }}</p>
+        <p class="tiny muted" style="margin:0">
+          {% if asset.is_withdrawable %}
+            Convertibili in denaro.
+          {% else %}
+            Spendibili e giocabili, non convertibili in denaro.
+          {% endif %}
+        </p>
+      </div>
+    {% endfor %}
+
+    {% if wallet.scaglie_to_next %}
+      <div class="card">
+        <p class="card__label">Scaglie</p>
+        <p class="pot" style="font-size:1.8rem">{{ wallet.scaglie_to_next }}<span class="muted" style="font-size:1rem">/100</span></p>
+        <div class="meter" role="img"
+             aria-label="{{ wallet.scaglie_to_next }} scaglie su 100 verso la prossima biglia">
+          <div class="meter__fill" style="width: {{ wallet.scaglie_to_next }}%"></div>
+        </div>
+        <p class="tiny muted" style="margin-top:var(--s2)">Alla centesima diventano una biglia intera.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  {# ---------------------------------------------------------------------
+     The claim funnel. Every biglia that has ever entered this platform has
+     passed through a card like this one.
+     --------------------------------------------------------------------- #}
+  <section class="stack" aria-label="Da riscattare">
+    <h2>Da riscattare</h2>
+
+    {% for credit in credits %}
+      {% include "web/partials/claim_card.html" with credit=credit %}
+    {% empty %}
+      <div class="card center stack">
+        <p class="muted" style="margin:0">
+          Niente in attesa. Le biglie che vinci, ricevi in regalo o incassi da una
+          vendita compaiono qui.
+        </p>
+        <p class="tiny muted" style="margin:0">
+          Anche restando fermo ne piove qualcuna ogni tanto — arrivano da quello
+          che la piattaforma ha guadagnato, non dal nulla.
+        </p>
+      </div>
+    {% endfor %}
+  </section>
+
+</div>
+{% endblock %}

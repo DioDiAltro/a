@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}biglie · compra, vendi, gioca{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+
+  <section class="stack" style="max-width:40rem">
+    <h1>Qui si compra e si vende<br>a biglie.</h1>
+    <p style="font-size:1.15rem">
+      Oggetti fisici, file, scommesse. A prezzo fisso, all'asta, a lotteria — o
+      battendo il venditore a un minigame. Le biglie si comprano, si vincono, si
+      regalano. E ogni biglia che ti arriva, prima di essere tua, ti fa scegliere
+      se prendertela o rischiarla.
+    </p>
+    {% if not user.is_authenticated %}
+      <div class="row wrap">
+        <a class="btn btn--primary" href="{% url 'identity:register' %}">Apri un conto</a>
+        <a class="btn btn--ghost" href="{% url 'marketplace:listing_list' %}">Guarda il mercato</a>
+      </div>
+      <p class="tiny muted">
+        Solo maggiorenni. Il {{ CHARITY_PERCENT|default:"3" }}% dei ricavi va in beneficenza.
+      </p>
+    {% endif %}
+  </section>
+
+  <section class="grid grid-cards">
+    <article class="card card--interactive stack">
+      <p class="card__label">Lotteria</p>
+      <h3>Vendi senza fissare un prezzo</h3>
+      <p class="tiny">
+        Decidi il minimo per far partire l'estrazione e quanto tempo aspettare.
+        Massimo non ce n'è: se superi il minimo puoi estrarre quando vuoi, e
+        scegliere se incassare in euro o in biglie.
+      </p>
+    </article>
+
+    <article class="card card--interactive stack">
+      <p class="card__label">Riscatto</p>
+      <h3>Prendile, o rischiale</h3>
+      <p class="tiny">
+        Vincite, regali, incassi: tutto passa dalla bacheca. Una slot, una ruota,
+        una scala che sale — o semplicemente il pulsante che le mette al sicuro.
+      </p>
+    </article>
+
+    <article class="card card--interactive stack">
+      <p class="card__label">Sfide</p>
+      <h3>I venditori si sfidano</h3>
+      <p class="tiny">
+        Metti in palio delle biglie e sfida un altro venditore. Chi vince prende
+        il piatto. Si accetta solo se si vuole: le sfide sono opzionali.
+      </p>
+    </article>
+
+    <article class="card card--interactive stack">
+      <p class="card__label">Pioggia</p>
+      <h3>Ogni tanto piovono</h3>
+      <p class="tiny">
+        Anche senza fare niente ti arriva qualche scaglia. Non nasce dal nulla:
+        viene da quello che la piattaforma ha già guadagnato e redistribuisce.
+      </p>
+    </article>
+  </section>
+
+  <section class="card stack center">
+    <p class="card__label">Beneficenza</p>
+    <p class="charity-total">{{ CHARITY_PERCENT|default:"3" }}%</p>
+    <p class="muted" style="margin:0">
+      di ogni ricavo della piattaforma, prelevato nello stesso istante in cui il
+      ricavo viene registrato.
+    </p>
+    <p><a href="{% url 'web:charity' %}">Guarda quanto e dove →</a></p>
+  </section>
+
+</div>
+{% endblock %}

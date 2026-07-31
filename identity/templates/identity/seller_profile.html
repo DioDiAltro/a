@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Il tuo negozio · biglie{% endblock %}
+
+{% block content %}
+<main>
+  <h1>{% if seller_profile %}Il tuo negozio{% else %}Apri un negozio{% endif %}</h1>
+
+  {% if seller_profile %}
+    <dl>
+      <dt>Vendite concluse</dt><dd>{{ seller_profile.sales_count }}</dd>
+      <dt>Valutazione</dt><dd>{{ seller_profile.rating|default:"nessun voto" }}</dd>
+      <dt>Sfide</dt>
+      <dd>{{ seller_profile.duels_won }} vinte / {{ seller_profile.duels_lost }} perse</dd>
+    </dl>
+  {% endif %}
+
+  <p>
+    Al livello {{ level.number }} ({{ level.title }}) puoi accettare sfide fino a
+    {{ level.definition.max_duel_stake }}.
+  </p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+      <p>
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<strong role="alert">{{ error }}</strong>{% endfor %}
+      </p>
+    {% endfor %}
+    <button type="submit">Salva</button>
+  </form>
+</main>
+{% endblock %}

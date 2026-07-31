@@ -1,0 +1,33 @@
+{% comment %}
+Replaces a claim card after it resolves. HTMX swaps this in place.
+
+Deliberately quiet for a safe claim and honest for a risky one — including when
+the user lost. Softening a loss ("quasi!", "ritenta!") is the exact moment a
+product stops being a game and starts being a manipulation.
+{% endcomment %}
+
+<article class="card stack" id="credit-{{ credit.pk }}">
+  {% if credit.state == "burned" %}
+    <p class="row" style="margin:0">
+      <span class="chip chip--loss">persa</span>
+      <span class="muted">Le {{ credit.amount }} sono andate.</span>
+    </p>
+  {% else %}
+    <p class="row" style="margin:0">
+      <span class="chip chip--win">riscattata</span>
+      <span class="pot">{{ settled }}</span>
+      {% if risked and settled.minor > credit.amount_minor %}
+        <span class="chip chip--gold">
+          ×{{ settled.minor|floatformat:0 }}/{{ credit.amount_minor|floatformat:0 }}
+        </span>
+      {% endif %}
+    </p>
+    <p class="tiny muted" style="margin:0">Ora sono spendibili.</p>
+  {% endif %}
+
+  {% if credit.game_round_id %}
+    <p class="tiny" style="margin:0">
+      <a href="{% url 'games:verify' credit.game_round_id %}">Verifica questo risultato</a>
+    </p>
+  {% endif %}
+</article>

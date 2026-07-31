@@ -1,0 +1,79 @@
+{% load static %}<!doctype html>
+<html lang="it" data-theme="{{ request.COOKIES.theme|default:'dark' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}biglie{% endblock %}</title>
+  <meta name="description" content="{% block description %}Compra, vendi e gioca. La valuta è la biglia.{% endblock %}">
+  <link rel="stylesheet" href="{% static 'css/biglie.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+<header class="topbar">
+  <div class="shell topbar__inner">
+    <a class="brand" href="{% url 'web:home' %}">
+      <span class="brand__marble" aria-hidden="true"></span>
+      biglie
+    </a>
+
+    <nav class="navlinks" aria-label="Principale">
+      <a class="navlink" href="{% url 'web:home' %}">Mercato</a>
+      <a class="navlink" href="{% url 'web:charity' %}">Beneficenza</a>
+
+      {% if user.is_authenticated %}
+        <a class="navlink" href="{% url 'web:dashboard' %}">Bacheca</a>
+
+        {# The balance pill and its unclaimed badge. Everything the user needs
+           to decide whether to open the dashboard, in one glance. #}
+        <a class="balance" href="{% url 'web:dashboard' %}"
+           aria-label="Il tuo saldo e i riscatti in attesa">
+          <span class="balance__marble" aria-hidden="true"></span>
+          <span class="num">{{ wallet.total_available_minor|default:0|floatformat:0 }}</span>
+          {% if wallet.unclaimed_count %}
+            <span class="badge-unclaimed"
+                  title="{{ wallet.unclaimed_count }} da riscattare">{{ wallet.unclaimed_count }}</span>
+          {% endif %}
+        </a>
+
+        <a class="navlink" href="{% url 'identity:logout' %}">Esci</a>
+      {% else %}
+        <a class="navlink" href="{% url 'identity:login' %}">Accedi</a>
+        <a class="btn btn--primary" href="{% url 'identity:register' %}">Inizia</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<main class="shell section" id="main">
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="shell">
+    <p class="tiny">
+      Il {{ CHARITY_PERCENT|default:"3" }}% dei ricavi va in beneficenza —
+      <a href="{% url 'web:charity' %}">guarda dove finisce</a>.
+    </p>
+    {# Not boilerplate. On a platform that settles games of chance for money,
+       these two links are the ones that have to be findable from every page. #}
+    <p class="tiny">
+      <a href="{% url 'compliance:limits' %}">Imposta i tuoi limiti</a> ·
+      <a href="{% url 'compliance:self_exclusion_status' %}">Autoesclusione</a> ·
+      Vietato ai minori di 18 anni. Il gioco può causare dipendenza.
+    </p>
+  </div>
+</footer>
+
+<script src="{% static 'js/biglie.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

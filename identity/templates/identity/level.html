@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Il tuo livello · biglie{% endblock %}
+
+{% block content %}
+<main>
+  <h1>Livello {{ level.number }} — {{ current.title }}</h1>
+
+  <p>{{ level.xp }} XP.
+    {% if next %}
+      Ti mancano {{ level.xp_to_next }} XP per diventare {{ next.title }}.
+    {% else %}
+      Hai raggiunto il livello massimo.
+    {% endif %}
+  </p>
+
+  <progress value="{{ level.progress_percent }}" max="100">
+    {{ level.progress_percent }}%
+  </progress>
+
+  <h2>Come si guadagna XP</h2>
+  <ul>
+    <li>Riscattando le biglie che ricevi.</li>
+    <li>Concludendo vendite.</li>
+    <li>Giocando: conta la puntata, non la vincita.</li>
+  </ul>
+
+  <h2>I livelli</h2>
+  <table>
+    <thead>
+      <tr><th>Livello</th><th>XP</th><th>Sfida massima</th><th>Sblocca</th></tr>
+    </thead>
+    <tbody>
+      {% for row in levels %}
+        <tr{% if row.number == level.number %} aria-current="true"{% endif %}>
+          <td>{{ row.number }} — {{ row.title }}</td>
+          <td>{{ row.xp_required }}</td>
+          <td>{{ row.max_duel_stake }}</td>
+          <td>{{ row.perks|join:", " }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</main>
+{% endblock %}

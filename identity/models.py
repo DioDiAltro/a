@@ -99,6 +99,65 @@ class User(AbstractUser):
         return self.display_name or self.email.split("@")[0]
 
 
+class PlayerLevel(models.Model):
+    """A user's progression. One row per user, created on registration.
+
+    The level is *derived* from `xp` and stored anyway, because it is read on
+    every duel challenge and every stake check and recomputing the threshold
+    table per request buys nothing. `identity.levels` owns the table and is the
+    only thing allowed to write here.
+    """
+
+    user = models.OneToOneField(
+        User, primary_key=True, on_delete=models.CASCADE, related_name="level"
+    )
+    xp = models.PositiveIntegerField(default=0)
+    number = models.PositiveSmallIntegerField(default=1, db_index=True)
+    leveled_up_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.user} · liv. {self.number}"
+
+    # The import is deferred: `levels` imports this module, so pulling it in at
+    # module scope would be a cycle.
+
+    @property
+    def definition(self):
+        """The `levels.Level` this row currently sits on."""
+        from identity.levels import level_for_xp
+
+        return level_for_xp(self.xp)
+
+    @property
+    def title(self) -> str:
+        return self.definition.title
+
+    @property
+    def next_definition(self):
+        from identity.levels import next_level_after
+
+        return next_level_after(self.number)
+
+    @property
+    def xp_to_next(self) -> int | None:
+        """XP still needed for the next level, or None at the top."""
+        nxt = self.next_definition
+        return None if nxt is None else max(0, nxt.xp_required - self.xp)
+
+    @property
+    def progress_percent(self) -> int:
+        """How far through the current level, 0..100, for the progress bar."""
+        nxt = self.next_definition
+        if nxt is None:
+            return 100
+        floor = self.definition.xp_required
+        span = nxt.xp_required - floor
+        if span <= 0:
+            return 100
+        return max(0, min(100, (self.xp - floor) * 100 // span))
+
+
 class SellerProfile(models.Model):
     """A user's selling identity. Created lazily on first listing.
 

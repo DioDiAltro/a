@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Equità verificabile · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:44rem">
+
+  <header class="stack">
+    <h1>Non devi fiderti di noi</h1>
+    <p>
+      Ogni estrazione e ogni giro di minigame su questo sito è verificabile da te,
+      dopo, senza chiedere il permesso a nessuno. Ecco esattamente come.
+    </p>
+  </header>
+
+  <section class="card stack">
+    <h2>Il meccanismo</h2>
+    <ol class="stack">
+      <li>
+        <strong>Prima</strong> che tu giochi, il server genera un seme segreto e
+        ne pubblica l'impronta (SHA-256). L'impronta la vedi subito; il seme no.
+      </li>
+      <li>
+        <strong>Tu</strong> fornisci il tuo seme. Puoi cambiarlo quando vuoi.
+        Questo è il passaggio che rende il tutto significativo: il risultato
+        dipende anche da un valore che il server non conosceva in anticipo.
+      </li>
+      <li>
+        L'esito nasce da <code>HMAC-SHA256(seme_server, seme_tuo:contatore)</code>.
+        Nessuna delle due parti può sceglierlo da sola.
+      </li>
+      <li>
+        <strong>Dopo</strong> la partita il seme del server viene rivelato. Tu
+        ricalcoli l'impronta e verifichi che sia quella pubblicata prima: se
+        combacia, il server non ha cambiato idea a metà.
+      </li>
+    </ol>
+  </section>
+
+  <section class="card stack">
+    <h2>Perché il modulo non basta</h2>
+    <p>
+      Il modo ingenuo di ricavare un numero da 0 a <em>n</em> partendo da byte
+      casuali è <code>byte % n</code>. È sbagliato: quando <em>n</em> non divide
+      256, i primi valori escono leggermente più spesso degli altri. Su un giro
+      non si nota; su un milione di giri è un margine che non abbiamo dichiarato.
+    </p>
+    <p>
+      Qui usiamo il campionamento con rifiuto: i byte che cadrebbero nella coda
+      sbilanciata vengono scartati e se ne pescano altri. È più lento di qualche
+      microsecondo ed è l'unico modo per cui l'RTP che leggi è l'RTP che ottieni.
+    </p>
+  </section>
+
+  <section class="card stack">
+    <h2>L'RTP che dichiariamo</h2>
+    <p>
+      I minigame restituiscono in media il <strong>94%</strong> di quanto viene
+      puntato. Il 6% è il margine della piattaforma — è così che il sito sta in
+      piedi, e preferiamo scriverlo che nasconderlo.
+    </p>
+    <p>
+      Ogni sei ore confrontiamo l'RTP realmente uscito con quello dichiarato,
+      gioco per gioco. Uno scostamento significativo è un incidente, non una
+      statistica: le tabelle dei premi sono la promessa che ti abbiamo fatto.
+    </p>
+    <p class="tiny muted">
+      Nel lungo periodo un RTP sotto il 100% significa che, giocando abbastanza,
+      si perde. Questo non è un dettaglio da leggere fra le righe: è come
+      funziona, e nessuna serie di vincite lo cambia.
+    </p>
+  </section>
+
+  <section class="card stack">
+    <h2>Le lotterie</h2>
+    <p>
+      Valgono le stesse regole, più due che riguardano solo chi vende: non può
+      comprare biglietti nella propria lotteria, e l'estrazione anticipata viene
+      annunciata con un preavviso pubblico. Senza quel preavviso, un venditore
+      potrebbe estrarre nell'istante statisticamente comodo per un complice.
+    </p>
+  </section>
+
+</div>
+{% endblock %}

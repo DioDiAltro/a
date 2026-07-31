@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Il tuo profilo · biglie{% endblock %}
+
+{% block content %}
+<main>
+  <h1>Il tuo profilo</h1>
+
+  <section aria-labelledby="dati">
+    <h2 id="dati">Dati dell'account</h2>
+    <dl>
+      <dt>Email</dt><dd>{{ user.email }}</dd>
+      <dt>Data di nascita</dt><dd>{{ user.date_of_birth|default:"non indicata" }}</dd>
+      <dt>Identità verificata</dt><dd>{% if user.is_identity_verified %}sì{% else %}no{% endif %}</dd>
+      <dt>Livello</dt>
+      <dd><a href="{% url 'identity:level' %}">{{ level.number }} — {{ level.title }}</a></dd>
+    </dl>
+  </section>
+
+  <section aria-labelledby="modifica">
+    <h2 id="modifica">Modifica</h2>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <p>
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<strong role="alert">{{ error }}</strong>{% endfor %}
+        </p>
+      {% endfor %}
+      <button type="submit">Salva</button>
+    </form>
+  </section>
+
+  <section aria-labelledby="negozio">
+    <h2 id="negozio">Negozio</h2>
+    {% if seller_profile %}
+      <p>{{ seller_profile.shop_name }} — {{ seller_profile.sales_count }} vendite.</p>
+      <p><a href="{% url 'identity:seller_profile' %}">Modifica il negozio</a></p>
+    {% else %}
+      <p><a href="{% url 'identity:seller_profile' %}">Apri un negozio</a></p>
+    {% endif %}
+  </section>
+
+  <section aria-labelledby="sicurezza">
+    <h2 id="sicurezza">Sicurezza e gioco responsabile</h2>
+    <ul>
+      <li><a href="{% url 'identity:password_change' %}">Cambia password</a></li>
+      <li><a href="{% url 'compliance:limits' %}">I tuoi limiti di gioco</a></li>
+      <li><a href="{% url 'compliance:kyc' %}">Verifica dell'identità</a></li>
+      <li><a href="{% url 'compliance:self_exclusion' %}">Autoesclusione</a></li>
+    </ul>
+  </section>
+</main>
+{% endblock %}
