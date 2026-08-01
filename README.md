@@ -150,37 +150,35 @@ pytest tests/test_boundaries.py # i confini architetturali
 
 Questa è una build in corso. Cosa regge oggi e cosa no, senza abbellimenti.
 
-**Completo e testato**
+**280 test verdi, `ruff` pulito, nessuna migrazione mancante.**
 
 | Area | Stato |
 |---|---|
 | `core` — Amount/Asset, event bus, idempotenza, contratti | ✅ |
 | `wallet` — partita doppia, 3 asset, crediti in attesa, hold, riconciliazione | ✅ |
-| `identity` — registrazione con verifica 18+, login, profili, livelli | ✅ |
-| `compliance` — KYC a soglie, limiti con cooling-off, autoesclusione, giornale AML a catena di hash | ✅ |
-| `web` — design system, imbuto dei riscatti, superfici canvas (ruota, slot) | ✅ |
+| `identity` — registrazione con verifica 18+, login, profili, livelli | ✅ codice, ⬜ test |
+| `compliance` — KYC a soglie, limiti con cooling-off, autoesclusione, giornale AML | ✅ |
+| `games` — RNG commit-reveal, 5 minigame, motore RTP, duelli | ✅ |
+| `payments` — Stripe, webhook idempotenti, prelievi con gate KYC | ✅ |
+| `charity` — beneficiari, distribuzione, trasparenza pubblica | ✅ |
+| `economy` — drip passivo, sorveglianza RTP, monitoraggio | ✅ |
+| `marketplace` — annunci, ordini, escrow merce | ✅ codice, ⬜ test |
+| `salemodes` — registry a plugin, lotteria, asta, prezzo fisso | 🚧 mancano `urls`/`views` e i test |
+| `web` — design system, imbuto dei riscatti, superfici canvas | ✅ |
 | Infrastruttura — Docker, Celery, Channels, CI, gate `LIVE_MODE` | ✅ |
 
-61 test verdi, `ruff` pulito, nessuna migrazione mancante. `tests/test_smoke.py`
-verifica che le pagine rendano davvero: una suite verde con la home che dà 500 è
-peggio di nessuna suite, perché rassicura.
+`tests/test_smoke.py` verifica che le pagine rendano davvero: una suite verde
+con la home che dà 500 è peggio di nessuna suite, perché rassicura.
 
-**Da completare**
+**Cosa manca ancora**
 
-| Area | Stato |
-|---|---|
-| `games` — RNG commit-reveal, minigame, motore RTP, duelli | 🚧 solo `fairness.py` |
-| `salemodes` — registry a plugin, lotteria, asta, mystery box | 🚧 solo `constants.py` |
-| `marketplace` — annunci, ordini, escrow merce, dispute | ⬜ |
-| `payments` — Stripe, prelievi con gate KYC | 🚧 modelli e costanti |
-| `charity` — beneficiari e distribuzione del fondo | ⬜ |
-| `economy` — drip passivo, sorveglianza RTP | ⬜ |
-
-I contratti che questi contesti devono rispettare sono già scritti e stabili in
-[`core/contracts.py`](core/contracts.py): eventi, costanti economiche e grafo
-delle dipendenze. Il lavoro che manca è implementazione dietro interfacce
-concordate, non progettazione.
-
-Due riferimenti nei template puntano a rotte che arriveranno con quei contesti
-(`marketplace:listing_list`, `games:verify`); il collegamento è segnalato con un
-commento nel punto in cui va ripristinato.
+- Test per `salemodes`, `marketplace` e `identity` — incluso quello che conta di
+  più: registrare un modo di vendita fittizio dentro il test e portarlo a
+  termine **senza toccare il motore ordini**. È l'unica prova che il giunto a
+  plugin sia reale e non velleitario.
+- `salemodes` non ha ancora viste e URL proprie.
+- Lo scenario end-to-end dell'esempio 1 (lotteria con minimo, estrazione
+  anticipata, pagamento del venditore) con asserzione esatta sul libro mastro.
+- Il CTA "guarda il mercato" nella home punta temporaneamente a `web:fairness`;
+  c'è un commento nel punto esatto in cui va ripristinato ora che
+  `marketplace:listing_list` esiste.
