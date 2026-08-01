@@ -139,6 +139,48 @@ Il gate esiste perché nessuno ci finisca dentro per distrazione.
 ```bash
 pytest                          # tutto
 pytest wallet                   # invarianti contabili
-pytest games                    # RTP, assenza di bias, commit-reveal
+pytest compliance               # limiti, autoesclusione, KYC, catena di audit
+pytest tests/test_smoke.py      # le pagine rendono davvero
 pytest tests/test_boundaries.py # i confini architetturali
 ```
+
+---
+
+## Stato
+
+Questa è una build in corso. Cosa regge oggi e cosa no, senza abbellimenti.
+
+**Completo e testato**
+
+| Area | Stato |
+|---|---|
+| `core` — Amount/Asset, event bus, idempotenza, contratti | ✅ |
+| `wallet` — partita doppia, 3 asset, crediti in attesa, hold, riconciliazione | ✅ |
+| `identity` — registrazione con verifica 18+, login, profili, livelli | ✅ |
+| `compliance` — KYC a soglie, limiti con cooling-off, autoesclusione, giornale AML a catena di hash | ✅ |
+| `web` — design system, imbuto dei riscatti, superfici canvas (ruota, slot) | ✅ |
+| Infrastruttura — Docker, Celery, Channels, CI, gate `LIVE_MODE` | ✅ |
+
+61 test verdi, `ruff` pulito, nessuna migrazione mancante. `tests/test_smoke.py`
+verifica che le pagine rendano davvero: una suite verde con la home che dà 500 è
+peggio di nessuna suite, perché rassicura.
+
+**Da completare**
+
+| Area | Stato |
+|---|---|
+| `games` — RNG commit-reveal, minigame, motore RTP, duelli | 🚧 solo `fairness.py` |
+| `salemodes` — registry a plugin, lotteria, asta, mystery box | 🚧 solo `constants.py` |
+| `marketplace` — annunci, ordini, escrow merce, dispute | ⬜ |
+| `payments` — Stripe, prelievi con gate KYC | 🚧 modelli e costanti |
+| `charity` — beneficiari e distribuzione del fondo | ⬜ |
+| `economy` — drip passivo, sorveglianza RTP | ⬜ |
+
+I contratti che questi contesti devono rispettare sono già scritti e stabili in
+[`core/contracts.py`](core/contracts.py): eventi, costanti economiche e grafo
+delle dipendenze. Il lavoro che manca è implementazione dietro interfacce
+concordate, non progettazione.
+
+Due riferimenti nei template puntano a rotte che arriveranno con quei contesti
+(`marketplace:listing_list`, `games:verify`); il collegamento è segnalato con un
+commento nel punto in cui va ripristinato.

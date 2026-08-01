@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Autoesclusione attiva · biglie{% endblock %}
+{% block content %}
+<div class="stack-lg" style="max-width:38rem">
+  {% if exclusion %}
+    <header class="stack">
+      <h1>Autoesclusione attiva</h1>
+      {% if exclusion.is_permanent %}
+        <p>Hai scelto l'esclusione permanente.</p>
+      {% else %}
+        <p>Termina il {{ exclusion.until }}.</p>
+      {% endif %}
+    </header>
+
+    <section class="card stack">
+      <h2>Cosa puoi ancora fare</h2>
+      <ul>
+        <li>Consultare i tuoi ordini e la tua cronologia</li>
+        <li><strong>Prelevare il tuo saldo</strong>, senza attese aggiuntive</li>
+        <li>Contattare l'assistenza</li>
+      </ul>
+    </section>
+
+    {% if can_end %}
+      <form method="post" action="{% url 'compliance:end_exclusion' %}" class="card stack">
+        {% csrf_token %}
+        <p style="margin:0">Il periodo è terminato. Puoi riattivare il conto.</p>
+        <button class="btn" type="submit">Riattiva il conto</button>
+      </form>
+    {% endif %}
+  {% else %}
+    <header class="stack">
+      <h1>Nessuna autoesclusione attiva</h1>
+      <p><a href="{% url 'compliance:self_exclusion' %}">Attivane una</a> quando vuoi.</p>
+    </header>
+  {% endif %}
+
+  <p class="tiny muted">Telefono Verde Nazionale gioco d'azzardo: <strong>800 558822</strong>.</p>
+</div>
+{% endblock %}

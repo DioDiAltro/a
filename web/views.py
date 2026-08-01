@@ -11,16 +11,13 @@ import uuid
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from core.exceptions import BiglieError
-from core.money import Asset
-from wallet.constants import AccountKind
-from wallet.ledger import system_account
-from wallet.models import PendingCredit
+from wallet.selectors import charity_pool_balances, claimable_credits, get_claimable_credit
 from wallet.services import claim_safe
 
 
@@ -39,10 +36,7 @@ def dashboard(request):
     centre of gravity, which is why it is the one screen `web` owns outright
     rather than delegating to a domain app.
     """
-    credits = (
-        PendingCredit.objects.claimable(request.user)
-        .order_by("expires_at")[:50]
-    )
+    credits = claimable_credits(request.user)
     return render(
         request,
         "web/dashboard.html",
@@ -60,7 +54,9 @@ def dashboard(request):
 @login_required
 def claim_credit_safe(request, credit_id: uuid.UUID):
     """Take the credit without risking it. HTMX swaps the card in place."""
-    credit = get_object_or_404(PendingCredit, pk=credit_id, user=request.user)
+    credit = get_claimable_credit(request.user, credit_id)
+    if credit is None:
+        raise Http404
 
     try:
         settled = claim_safe(
@@ -92,7 +88,9 @@ def claim_credit_risky(request, credit_id: uuid.UUID):
     transaction, before any pixel moves. The client is told what happened and
     animates toward it.
     """
-    credit = get_object_or_404(PendingCredit, pk=credit_id, user=request.user)
+    credit = get_claimable_credit(request.user, credit_id)
+    if credit is None:
+        raise Http404
 
     if not credit.is_claimable:
         messages.warning(request, "Questo riscatto non è più disponibile.")
@@ -117,11 +115,7 @@ def charity(request):
     from a cached counter, because a charity number nobody can check is
     marketing rather than accounting.
     """
-    pools = {
-        asset: system_account(AccountKind.CHARITY_POOL, asset).balance
-        for asset in Asset
-    }
-    return render(request, "web/charity.html", {"pools": pools})
+    return render(request, "web/charity.html", {"pools": charity_pool_balances()})
 
 
 def fairness(request):

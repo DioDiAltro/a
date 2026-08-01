@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Autoesclusione · biglie{% endblock %}
+{% block content %}
+<div class="stack-lg" style="max-width:38rem">
+  <header class="stack">
+    <h1>Autoesclusione</h1>
+    <p>
+      Blocchi l'accesso al gioco e agli acquisti per il periodo che scegli.
+      <strong>Non potrai revocarla prima della scadenza</strong>, nemmeno
+      scrivendo all'assistenza.
+    </p>
+    <p>
+      Continuerai a poter consultare i tuoi ordini e a <strong>prelevare il tuo
+      denaro</strong>: essere esclusi dal gioco non significa essere chiusi fuori
+      dal proprio saldo.
+    </p>
+  </header>
+
+  <form method="post" class="card stack">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <button class="btn" type="submit">Attiva l'autoesclusione</button>
+  </form>
+
+  <p class="tiny muted">
+    Se ti serve parlarne con qualcuno: Telefono Verde Nazionale per le
+    problematiche legate al gioco d'azzardo, <strong>800 558822</strong>, gratuito e anonimo.
+  </p>
+</div>
+{% endblock %}

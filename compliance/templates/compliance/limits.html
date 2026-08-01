@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}I tuoi limiti · biglie{% endblock %}
+{% block content %}
+<div class="stack-lg" style="max-width:44rem">
+  <header class="stack">
+    <h1>I tuoi limiti</h1>
+    <p>
+      Decidi tu quanto puoi depositare, perdere o giocare. Una regola sola, e la
+      diciamo prima e non dopo: <strong>abbassare un limite vale subito, alzarlo
+      vale fra 24 ore</strong>. Nel frattempo puoi annullare l'aumento.
+    </p>
+    <p class="tiny muted">
+      È fatto apposta. Il momento in cui uno vuole alzare un limite è esattamente
+      il momento in cui non dovrebbe poterlo fare.
+    </p>
+  </header>
+
+  <section class="card stack">
+    <h2>Limiti attivi</h2>
+    {% for limit in limits %}
+      <div class="row-between wrap" style="border-bottom:1px solid var(--line);padding-bottom:var(--s3)">
+        <div>
+          <p style="margin:0"><strong>{{ limit.get_kind_display }}</strong> · {{ limit.get_period_display|lower }}</p>
+          <p class="num muted" style="margin:0">{{ limit.effective_value }}</p>
+          {% if limit.has_pending_change %}
+            <p class="tiny" style="margin:0;color:var(--gold)">
+              aumento a {{ limit.pending_value }} in vigore dal {{ limit.effective_from }}
+            </p>
+          {% endif %}
+        </div>
+        {% if limit.has_pending_change %}
+          <form method="post" action="{% url 'compliance:cancel_limit_change' limit.kind limit.period %}">
+            {% csrf_token %}
+            <button class="btn btn--ghost" type="submit">Annulla l'aumento</button>
+          </form>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p class="muted" style="margin:0">Nessun limite impostato.</p>
+    {% endfor %}
+  </section>
+
+  <section class="card stack">
+    <h2>Imposta un limite</h2>
+    <form method="post" class="stack">
+      {% csrf_token %}
+      {{ form.as_div }}
+      <button class="btn btn--primary" type="submit">Salva</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

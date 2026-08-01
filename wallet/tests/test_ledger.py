@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 from django.contrib.auth import get_user_model
 
-from core.exceptions import InsufficientFunds, LedgerImbalance
+from core.exceptions import AssetMismatch, InsufficientFunds, InvalidAmount, LedgerImbalance
 from core.money import Amount, Asset, allocate, split_percentage
 from wallet.constants import AccountKind, EntryKind
 from wallet.ledger import Leg, circulating_supply, post, reconcile, system_account, user_account
@@ -39,12 +39,12 @@ def biglie(units: str) -> Amount:
 
 def test_amount_refuses_floats():
     """The one input that would quietly corrupt every downstream figure."""
-    with pytest.raises(Exception):
+    with pytest.raises(InvalidAmount):
         Amount.from_major(10.5, PIENA)
 
 
 def test_assets_never_mix():
-    with pytest.raises(Exception):
+    with pytest.raises(AssetMismatch):
         Amount(100, PIENA) + Amount(100, Asset.EUR)
 
 

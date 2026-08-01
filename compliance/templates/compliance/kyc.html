@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Verifica identità · biglie{% endblock %}
+{% block content %}
+<div class="stack-lg" style="max-width:38rem">
+  <header class="stack">
+    <h1>Verifica identità</h1>
+    <p>Livello attuale: <span class="chip">{{ tier }}</span></p>
+    <p class="tiny muted">
+      Non conserviamo documenti né scansioni: solo il riferimento che il fornitore
+      di verifica ci restituisce. Se questa tabella trapelasse, non trapelerebbe
+      il passaporto di nessuno.
+    </p>
+  </header>
+
+  <section class="card stack">
+    <h2>Cosa sblocca</h2>
+    <ul>
+      <li><strong>Base</strong> — prelievi fino alla soglia cumulativa</li>
+      <li><strong>Completa</strong> — prelievi oltre la soglia</li>
+    </ul>
+    <p class="tiny muted">
+      Chiedere un documento per muovere pochi euro allontana le persone; non
+      chiederlo per muoverne molti trasforma il sito in una lavanderia. La soglia
+      esiste per stare in mezzo.
+    </p>
+  </section>
+
+  <section class="card stack">
+    <h2>Le tue richieste</h2>
+    {% for submission in submissions %}
+      <p style="margin:0">{{ submission.created_at|date:"d/m/Y" }} · {{ submission.get_tier_display }} · {{ submission.get_status_display }}</p>
+    {% empty %}
+      <p class="muted" style="margin:0">Nessuna richiesta inviata.</p>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}
