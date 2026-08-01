@@ -89,14 +89,35 @@ docker compose exec web python manage.py createsuperuser
 
 Su http://localhost:8000.
 
-Senza Docker:
+### Senza Docker, con `uv`
 
 ```bash
-pip install -r requirements-dev.txt
-python manage.py migrate
-python manage.py runserver
-pytest
+uv sync --extra dev
+
+# Le impostazioni di sviluppo puntano a PostgreSQL: senza container serve
+# dirgli di usare SQLite, altrimenti `migrate` non trova il database.
+export DATABASE_URL="sqlite:///$PWD/dev.sqlite3"
+export DJANGO_SETTINGS_MODULE=config.settings.dev
+
+uv run manage.py migrate
+uv run manage.py createsuperuser
+uv run manage.py runserver
 ```
+
+I test si lanciano con `uv run pytest` e **non** vanno toccati dalle due
+variabili qui sopra: `--ds=config.settings.test` in `addopts` ha la precedenza
+sull'ambiente, così la suite non finisce mai sul database di sviluppo. Senza
+quel flag, chi esporta le impostazioni dev per far girare il server e poi lancia
+i test si ritrova 39 fallimenti incomprensibili — e, puntato su un database
+vero, la suite ci creerebbe e cancellerebbe righe.
+
+### Cosa gira senza Redis
+
+Le pagine e tutto il ciclo del denaro. **Non** girano i socket live (Channels) e
+i task periodici di Celery — quindi le lotterie non si chiudono da sole alla
+scadenza, le biglie non piovono e l'escrow non si sblocca a timeout. La logica è
+implementata e testata, ma serve qualcosa che la faccia scattare: per vederla in
+azione usa `docker compose up`.
 
 I test girano su SQLite in memoria e non richiedono container: l'invariante di
 somma zero è applicata in `wallet.ledger.post`, non da un trigger, proprio
