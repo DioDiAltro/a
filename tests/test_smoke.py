@@ -19,10 +19,31 @@ from core.money import Amount, Asset
 from wallet.constants import CreditSource
 from wallet.services import credit_pending
 
-PUBLIC_PAGES = ["web:home", "web:charity", "web:fairness", "identity:login", "identity:register"]
+PUBLIC_PAGES = [
+    "web:home",
+    "web:charity",
+    "web:fairness",
+    "identity:login",
+    "identity:register",
+    # The market is browsable logged-out on purpose: a marketplace nobody can
+    # look at has no reason to be joined.
+    "marketplace:listing_list",
+    # Charity transparency needs no account — a figure only members can see is
+    # marketing, not accounting.
+    "charity:transparency",
+]
 
 AUTHED_PAGES = [
     "web:dashboard",
+    "marketplace:listing_create",
+    "marketplace:seller_dashboard",
+    "marketplace:order_list",
+    "games:index",
+    "games:history",
+    "games:duels",
+    "payments:deposit",
+    "payments:withdraw",
+    "payments:history",
     "compliance:limits",
     "compliance:self_exclusion",
     "compliance:self_exclusion_status",

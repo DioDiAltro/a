@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Il tuo negozio · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+
+  <header class="row-between wrap">
+    <h1>Il tuo negozio</h1>
+    <a class="btn btn--primary" href="{% url 'marketplace:listing_create' %}">Metti in vendita</a>
+  </header>
+
+  {# ---------------------------------------------------------------------
+     What needs the seller to do something, first and unmissable. A shop
+     dashboard that opens on vanity totals buries the one order that is
+     about to time out.
+     --------------------------------------------------------------------- #}
+  {% if awaiting_shipment or disputed %}
+    <section class="stack" aria-label="Da gestire">
+      <h2>Da gestire</h2>
+
+      {% for order in awaiting_shipment %}
+        <article class="card row-between wrap">
+          <div>
+            <p style="margin:0"><strong>{{ order.listing.title }}</strong></p>
+            <p class="tiny muted" style="margin:0">
+              Venduto a {{ order.buyer.handle }} — in attesa di spedizione.
+              {% if order.escrow_release_at %}
+                L'incasso si sblocca il {{ order.escrow_release_at|date:"d/m/Y" }}.
+              {% endif %}
+            </p>
+          </div>
+          <div class="row">
+            <span class="pot">{{ order.amount }}</span>
+            <a class="btn" href="{% url 'marketplace:order_detail' order.pk %}">Apri</a>
+          </div>
+        </article>
+      {% endfor %}
+
+      {% for order in disputed %}
+        <article class="card row-between wrap">
+          <div>
+            <p style="margin:0">
+              <span class="chip chip--loss">contestato</span>
+              <strong>{{ order.listing.title }}</strong>
+            </p>
+            <p class="tiny muted" style="margin:0">
+              L'incasso è congelato finché la disputa non si chiude.
+            </p>
+          </div>
+          <a class="btn" href="{% url 'marketplace:order_detail' order.pk %}">Rispondi</a>
+        </article>
+      {% endfor %}
+    </section>
+  {% endif %}
+
+  {# ---------------------------------------------------------------------
+     Live sales. Each mode renders its own progress line — the dashboard
+     does not know a lottery from an auction, same as the listing page.
+     --------------------------------------------------------------------- #}
+  <section class="stack" aria-label="Vendite in corso">
+    <h2>In corso</h2>
+
+    {% for ctx in live_sales %}
+      <article class="card stack">
+        <div class="row-between wrap">
+          <p style="margin:0"><strong>{{ ctx.sale.listing_title|default:ctx.summary }}</strong></p>
+          <span class="chip">{{ ctx.mode.label }}</span>
+        </div>
+
+        <p class="muted" style="margin:0">{{ ctx.summary }}</p>
+
+        {% if ctx.progress.percent is not None %}
+          <div class="meter" role="img" aria-label="{{ ctx.summary }}">
+            <div class="meter__fill {% if ctx.progress.over_threshold %}meter__fill--over{% endif %}"
+                 style="width: {{ ctx.progress.percent }}%"></div>
+          </div>
+        {% endif %}
+
+        <div class="row wrap">
+          {% if ctx.can_announce %}
+            <form method="post" action="{% url 'marketplace:announce_draw' ctx.sale.listing_id %}">
+              {% csrf_token %}
+              <button class="btn btn--risk" type="submit">Annuncia l'estrazione</button>
+            </form>
+            <p class="tiny muted" style="margin:0">
+              L'annuncio è vincolante: parte un preavviso pubblico e alla scadenza
+              si estrae comunque.
+            </p>
+          {% elif ctx.can_settle_early %}
+            <form method="post" action="{% url 'marketplace:settle_now' ctx.sale.listing_id %}">
+              {% csrf_token %}
+              <button class="btn btn--primary" type="submit">Estrai ora</button>
+            </form>
+          {% endif %}
+        </div>
+      </article>
+    {% empty %}
+      <p class="muted">Nessuna vendita aperta.</p>
+    {% endfor %}
+  </section>
+
+  <section class="stack" aria-label="I tuoi annunci">
+    <h2>I tuoi annunci</h2>
+    <div class="grid grid-cards">
+      {% for listing in listings %}
+        <a class="card card--interactive stack" href="{% url 'marketplace:listing_detail' listing.pk %}">
+          <p class="card__label">{{ listing.get_sale_mode_display|default:listing.sale_mode }}</p>
+          <p style="margin:0"><strong>{{ listing.title }}</strong></p>
+          <span class="chip">{{ listing.get_state_display }}</span>
+        </a>
+      {% empty %}
+        <p class="muted">Non hai ancora messo in vendita niente.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="stack" aria-label="Vendite concluse">
+    <h2>Concluse</h2>
+    {% for order in orders %}
+      <div class="row-between wrap" style="border-bottom:1px solid var(--line);padding-block:var(--s2)">
+        <span>{{ order.listing.title }}</span>
+        <span class="num">{{ order.amount }}</span>
+      </div>
+    {% empty %}
+      <p class="muted">Ancora nessuna vendita.</p>
+    {% endfor %}
+  </section>
+
+</div>
+{% endblock %}
