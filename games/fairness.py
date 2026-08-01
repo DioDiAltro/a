@@ -423,14 +423,24 @@ def assert_fair(
         )
 
 
-def _comparable(outcome: dict[str, Any]) -> dict[str, Any]:
-    """Strip presentation-only keys before comparing two derivations.
+#: Keys that record *what the player did*, not what the RNG produced. How far up
+#: the ladder somebody chose to climb is not part of the derivation, so it must
+#: not take part in the comparison — otherwise a perfectly honest round would
+#: fail verification the moment the player cashed out.
+_PLAYER_CHOICE_KEYS = frozenset(
+    {"revealed_rungs", "cashed_out", "final_rung", "round_id", "settled_at", "label", "settled"}
+)
 
-    Round ids, timestamps and how much of a ladder the player has revealed are
-    not products of the RNG, so they must not take part in the comparison.
-    """
-    ignored = {"revealed_rungs", "cashed_out", "final_rung", "round_id", "settled_at"}
-    return {k: v for k, v in outcome.items() if k not in ignored}
+
+def _comparable(outcome: dict[str, Any]) -> dict[str, Any]:
+    """Reduce a stored or replayed outcome to the part the seed determines."""
+    trimmed = {k: v for k, v in outcome.items() if k not in _PLAYER_CHOICE_KEYS}
+    detail = trimmed.get("detail")
+    if isinstance(detail, dict):
+        trimmed["detail"] = {
+            k: v for k, v in detail.items() if k not in _PLAYER_CHOICE_KEYS
+        }
+    return trimmed
 
 
 #: Shown on the verification page, in the user's language. Kept next to the code

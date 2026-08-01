@@ -76,18 +76,10 @@ MAX_DUEL_CHALLENGES_PER_DAY = 3
 #: spam somebody's notification list.
 MIN_DUEL_STAKE_MINOR = 100  # 1 biglia
 
-#: Maximum stake a user may put on a duel, by account level. The cap is the
-#: main protection against a whale using duels to drain a new seller, and
-#: against a compromised account being emptied in one click.
-DUEL_STAKE_CAP_BY_LEVEL: dict[int, int] = {
-    1: 2_000,      # 20 biglie
-    2: 5_000,
-    3: 10_000,
-    4: 25_000,
-    5: 100_000,    # 1 000 biglie
-}
-
-DEFAULT_LEVEL = 1
+# The *upper* bound on a duel stake is not defined here: `identity.levels` owns
+# the level table and therefore owns `max_duel_stake`. Duplicating the ceiling in
+# this module would guarantee the two drift, and the copy that lost would be the
+# one deciding how much of a stranger's money a new account can put at risk.
 
 #: Longest client seed we will store. Long enough for a wallet address or a
 #: sentence the user cares about, short enough to keep the verify page honest.
