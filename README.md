@@ -150,35 +150,49 @@ pytest tests/test_boundaries.py # i confini architetturali
 
 Questa è una build in corso. Cosa regge oggi e cosa no, senza abbellimenti.
 
-**280 test verdi, `ruff` pulito, nessuna migrazione mancante.**
+**330 test verdi, `ruff` pulito, nessuna migrazione mancante.**
 
-| Area | Stato |
+Tutti i contesti sono implementati e testati:
+
+| Area | |
 |---|---|
-| `core` — Amount/Asset, event bus, idempotenza, contratti | ✅ |
-| `wallet` — partita doppia, 3 asset, crediti in attesa, hold, riconciliazione | ✅ |
-| `identity` — registrazione con verifica 18+, login, profili, livelli | ✅ codice, ⬜ test |
-| `compliance` — KYC a soglie, limiti con cooling-off, autoesclusione, giornale AML | ✅ |
-| `games` — RNG commit-reveal, 5 minigame, motore RTP, duelli | ✅ |
-| `payments` — Stripe, webhook idempotenti, prelievi con gate KYC | ✅ |
-| `charity` — beneficiari, distribuzione, trasparenza pubblica | ✅ |
-| `economy` — drip passivo, sorveglianza RTP, monitoraggio | ✅ |
-| `marketplace` — annunci, ordini, escrow merce | ✅ codice, ⬜ test |
-| `salemodes` — registry a plugin, lotteria, asta, prezzo fisso | 🚧 mancano `urls`/`views` e i test |
-| `web` — design system, imbuto dei riscatti, superfici canvas | ✅ |
-| Infrastruttura — Docker, Celery, Channels, CI, gate `LIVE_MODE` | ✅ |
+| `core` | Amount/Asset, event bus, idempotenza, contratti |
+| `wallet` | partita doppia, 3 asset, crediti in attesa, hold, riconciliazione |
+| `identity` | registrazione con verifica 18+, login, profili, livelli |
+| `compliance` | KYC a soglie, limiti con cooling-off, autoesclusione, giornale AML |
+| `games` | RNG commit-reveal, 5 minigame, motore RTP, duelli |
+| `salemodes` | registry a plugin: prezzo fisso, asta, lotteria, groupbuy, mystery box, sfida |
+| `marketplace` | annunci fisici/digitali/scommesse, ordini, escrow, dispute |
+| `payments` | Stripe, webhook idempotenti, prelievi con gate KYC |
+| `charity` | beneficiari, distribuzione, trasparenza pubblica |
+| `economy` | drip passivo, sorveglianza RTP, monitoraggio dell'inflazione |
+| `web` | design system, imbuto dei riscatti, superfici canvas |
+| Infrastruttura | Docker, Celery, Channels, CI, gate `LIVE_MODE` |
 
-`tests/test_smoke.py` verifica che le pagine rendano davvero: una suite verde
-con la home che dà 500 è peggio di nessuna suite, perché rassicura.
+### I cinque esempi del brief
 
-**Cosa manca ancora**
+Ognuno è coperto da un test che lo esegue davvero, non da una funzione che
+sembra farlo:
 
-- Test per `salemodes`, `marketplace` e `identity` — incluso quello che conta di
-  più: registrare un modo di vendita fittizio dentro il test e portarlo a
-  termine **senza toccare il motore ordini**. È l'unica prova che il giunto a
-  plugin sia reale e non velleitario.
-- `salemodes` non ha ancora viste e URL proprie.
-- Lo scenario end-to-end dell'esempio 1 (lotteria con minimo, estrazione
-  anticipata, pagamento del venditore) con asserzione esatta sul libro mastro.
-- Il CTA "guarda il mercato" nella home punta temporaneamente a `web:fairness`;
-  c'è un commento nel punto esatto in cui va ripristinato ora che
-  `marketplace:listing_list` esiste.
+| Esempio | Dove |
+|---|---|
+| 1 — Lotteria con minimo, nessun massimo, estrazione anticipata | `salemodes/tests/test_lottery_scenario.py` |
+| 2 — Biglie che piovono su chi non fa niente | `economy/tests/test_drip.py` |
+| 3 — Riscatto sicuro o rischioso | `games/tests/test_claim_gamble.py` |
+| 4 — Venditori che si sfidano per le biglie | `games/tests/test_duels.py` |
+| 5 — Il 3% in beneficenza | `charity/tests/test_distribution.py` |
+
+### I test che vale la pena guardare per primi
+
+- **`salemodes/tests/test_plugin_seam.py`** — inventa un'asta a offerta segreta
+  dentro il test, la registra, e la porta a termine attraverso il percorso
+  pubblico ordinario. Né `marketplace` né `salemodes.services` sanno che esiste,
+  e il motore ordini produce comunque un ordine. È la differenza fra
+  un'architettura che *permette* nuove meccaniche e una che dice di permetterle.
+- **`games/tests/test_fairness_and_rtp.py`** — chi-quadro su sei distribuzioni
+  per dimostrare che l'RNG non ha bias da modulo, RTP verificato in modo esatto
+  con aritmetica razionale, più 40k giri simulati per gioco.
+- **`tests/test_smoke.py`** — ogni pagina dell'app rende davvero. Una suite verde
+  con la home che dà 500 è peggio di nessuna suite, perché rassicura.
+- **`wallet/tests/`** — le invarianti contabili: le scritture sommano zero per
+  asset, i saldi coincidono con le scritture, e le vincite non coniano nulla.
