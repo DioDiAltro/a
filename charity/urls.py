@@ -1,5 +1,10 @@
 from django.urls import path
 
+from charity import views
+
 app_name = "charity"
 
-urlpatterns: list[path] = []
+urlpatterns = [
+    path("", views.transparency, name="transparency"),
+    path("<slug:slug>/", views.beneficiary_detail, name="beneficiary"),
+]
