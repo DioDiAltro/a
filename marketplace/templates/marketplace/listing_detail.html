@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}{{ listing.title }} · biglie{% endblock %}
+{% block description %}{{ listing.description|truncatewords:25 }}{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+
+  <article class="stack">
+    <p class="card__label">{{ listing.get_kind_display }}</p>
+    <h1>{{ listing.title }}</h1>
+    <p class="tiny muted">
+      Venduto da {{ listing.seller.handle }}
+      {% if listing.ships_from %}· spedisce da {{ listing.ships_from }}{% endif %}
+    </p>
+
+    {% if listing.image %}
+      <img src="{{ listing.image.url }}" alt="{{ listing.title }}" style="max-width:100%;border-radius:var(--r-lg)">
+    {% endif %}
+
+    <p>{{ listing.description|linebreaksbr }}</p>
+
+    {% if listing.kind == "bet" %}
+      <section class="card stack">
+        <p class="card__label">Scommessa</p>
+        <p><strong>{{ listing.bet_question }}</strong></p>
+        <p class="tiny muted">
+          Decide: {{ listing.bet_resolution_source }}
+          {% if listing.bet_resolves_at %}· entro il {{ listing.bet_resolves_at|date:"j F Y" }}{% endif %}
+        </p>
+        <p class="tiny muted">Il venditore copre con {{ listing.counter_stake }}.</p>
+      </section>
+    {% endif %}
+  </article>
+
+  {# ---------------------------------------------------------------------
+     The plugin seam, rendered. Whatever mechanic is selling this listing
+     supplies its own partial; this page includes it without knowing which.
+     --------------------------------------------------------------------- #}
+  {% if ctx %}
+    {% include ctx.partial with mode=ctx.mode progress=ctx.progress summary=ctx.summary sale=ctx.sale is_open=ctx.is_open is_seller=ctx.is_seller my_participation=ctx.my_participation can_announce=ctx.can_announce can_settle_early=ctx.can_settle_early participant_count=ctx.participant_count commitment_hash=ctx.commitment_hash action_url=action_url announce_url=announce_url settle_url=settle_url %}
+  {% elif listing.state == "sold" %}
+    <p class="chip chip--gold">Venduto</p>
+  {% else %}
+    <p class="muted">Questo annuncio non è in vendita.</p>
+  {% endif %}
+
+  {% if outcome and not outcome.aborted %}
+    <section class="card stack">
+      <p class="card__label">Esito</p>
+      <p class="pot">{{ outcome.gross }}</p>
+      {% if outcome.verification %}
+        <p class="tiny muted">
+          L'estrazione è verificabile:
+          <a href="{% url 'marketplace:sale_verify' outcome.sale_id %}">rifai il sorteggio</a>.
+        </p>
+      {% endif %}
+    </section>
+  {% endif %}
+
+</div>
+{% endblock %}

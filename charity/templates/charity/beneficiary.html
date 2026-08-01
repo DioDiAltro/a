@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}{{ beneficiary.name }} · Beneficenza · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:46rem">
+
+  <header class="stack">
+    <p class="card__label">
+      <a href="{% url 'charity:transparency' %}">Beneficenza</a>
+    </p>
+    <h1>{{ beneficiary.name }}</h1>
+    {% if not beneficiary.is_active %}
+      <p><span class="chip">Non riceve più nuove quote</span></p>
+    {% endif %}
+  </header>
+
+  {% if beneficiary.description %}
+    <section class="card stack">
+      <p>{{ beneficiary.description|linebreaksbr }}</p>
+    </section>
+  {% endif %}
+
+  <section class="card stack" aria-labelledby="dati">
+    <h2 id="dati">Dati verificabili</h2>
+    <dl>
+      {% if beneficiary.registration_number %}
+        <dt>Codice fiscale / registro</dt>
+        <dd class="num">{{ beneficiary.registration_number }}</dd>
+      {% endif %}
+      {% if beneficiary.website %}
+        <dt>Sito</dt>
+        <dd><a href="{{ beneficiary.website }}" rel="noopener nofollow">{{ beneficiary.website }}</a></dd>
+      {% endif %}
+      <dt>Peso nella ripartizione</dt>
+      <dd class="num">{{ beneficiary.weight }}</dd>
+    </dl>
+    <p class="tiny muted">
+      Pubblichiamo il codice perché è quello che ti permette di verificare da
+      solo che l'associazione esista davvero.
+    </p>
+  </section>
+
+  <section class="card stack" aria-labelledby="totali">
+    <h2 id="totali">Totale versato</h2>
+    {% for asset, amount in totals.items %}
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ amount }} <span class="tiny muted">{{ asset.label }}</span></p>
+    {% empty %}
+      <p class="muted">Nessun versamento ancora completato.</p>
+    {% endfor %}
+  </section>
+
+  <section class="card stack" aria-labelledby="storico">
+    <h2 id="storico">Storico</h2>
+    {% if payouts %}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Data</th>
+            <th scope="col">Importo</th>
+            <th scope="col">Stato</th>
+            <th scope="col">Riferimento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payout in payouts %}
+            <tr>
+              <td>{{ payout.paid_at|default:payout.created_at|date:"d/m/Y" }}</td>
+              <td class="num">{{ payout.amount }}</td>
+              <td>{{ payout.get_state_display }}</td>
+              <td class="tiny muted">{{ payout.reference|default:"—" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">Nessuna quota assegnata finora.</p>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

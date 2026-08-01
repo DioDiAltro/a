@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Minigame · biglie{% endblock %}
+{% block description %}Quattro minigame, RTP dichiarato e verificabile.{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+
+  <header class="stack">
+    <h1>I minigame</h1>
+    <p class="muted">
+      Non si gioca a vuoto: un minigame si apre quando decidi di rischiare un
+      riscatto in attesa. Qui ci sono le regole e le probabilità, per intero,
+      prima che tu punti qualcosa.
+    </p>
+  </header>
+
+  <div class="grid grid-cards">
+    {% for game in games %}
+      <article class="card card--interactive stack">
+        <h2 style="margin:0">{{ game.name }}</h2>
+        <p class="muted" style="margin:0">{{ game.tagline }}</p>
+        <p class="row" style="margin:0">
+          <span class="chip">RTP {{ game.rtp_percent }}%</span>
+          <span class="chip">paga {{ game.hit_rate_percent }}% delle volte</span>
+        </p>
+      </article>
+    {% endfor %}
+  </div>
+
+  {% for game in games %}
+    {% include "games/_paytable.html" with game=game %}
+  {% endfor %}
+
+  {% include "games/_seed_form.html" %}
+
+  <p>
+    <a class="btn btn--ghost" href="{% url 'games:history' %}">Il tuo storico</a>
+    <a class="btn btn--ghost" href="{% url 'games:duels' %}">Le sfide</a>
+  </p>
+
+</div>
+{% endblock %}

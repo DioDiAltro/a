@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Mercato · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+
+  <header class="stack">
+    <h1>Mercato</h1>
+    <p class="muted">
+      Ogni annuncio si vende a modo suo: prezzo fisso, asta, lotteria, gruppo,
+      scatola misteriosa, sfida.
+    </p>
+  </header>
+
+  <form method="get" class="row wrap" role="search">
+    <label class="field">
+      <span class="visually-hidden">Cerca</span>
+      <input type="search" name="q" value="{{ query }}" placeholder="Cerca nel mercato">
+    </label>
+
+    <label class="field">
+      <span class="visually-hidden">Tipo</span>
+      <select name="kind">
+        <option value="">Tutto</option>
+        {% for k in kinds %}
+          <option value="{{ k.value }}" {% if kind == k.value %}selected{% endif %}>{{ k.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="visually-hidden">Modalità</span>
+      <select name="mode">
+        <option value="">Tutte le modalità</option>
+        {% for m in modes %}
+          <option value="{{ m.key }}" {% if mode == m.key %}selected{% endif %}>{{ m.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <button class="btn" type="submit">Filtra</button>
+    {% if user.is_authenticated %}
+      <a class="btn btn--primary" href="{% url 'marketplace:listing_create' %}">Vendi qualcosa</a>
+    {% endif %}
+  </form>
+
+  <section class="grid grid-cards" aria-label="Annunci">
+    {% for listing in page %}
+      <article class="card card--interactive stack">
+        <p class="card__label">{{ listing.get_kind_display }}</p>
+        <h2 style="font-size:1.1rem;margin:0">
+          <a href="{{ listing.get_absolute_url }}">{{ listing.title }}</a>
+        </h2>
+        <p class="tiny muted">{{ listing.description|truncatewords:18 }}</p>
+        <p class="row-between">
+          <span class="chip">{{ listing.sale_mode }}</span>
+          <span class="tiny muted">{{ listing.seller.handle }}</span>
+        </p>
+      </article>
+    {% empty %}
+      <p class="muted">Ancora niente in vendita. {% if user.is_authenticated %}
+        <a href="{% url 'marketplace:listing_create' %}">Comincia tu.</a>{% endif %}</p>
+    {% endfor %}
+  </section>
+
+  {% if page.has_other_pages %}
+    <nav class="row" aria-label="Pagine">
+      {% if page.has_previous %}
+        <a class="btn" href="?page={{ page.previous_page_number }}&q={{ query }}">Precedente</a>
+      {% endif %}
+      <span class="tiny muted">Pagina {{ page.number }} di {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}
+        <a class="btn" href="?page={{ page.next_page_number }}&q={{ query }}">Successiva</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

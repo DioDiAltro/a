@@ -65,8 +65,21 @@ class LimitKind(models.TextChoices):
     WAGER = "wager", "Giocato"
     SESSION_TIME = "session_time", "Tempo di gioco"
 
+    #: Recorded, never enforced. Withdrawals are tracked because the cumulative
+    #: figure decides when BASIC verification stops being enough — but a *limit*
+    #: on getting your own money out would protect nobody and trap somebody, so
+    #: this kind is deliberately absent from MONEY_LIMIT_KINDS and `check_limit`
+    #: refuses it.
+    WITHDRAWAL = "withdrawal", "Prelievo"
 
+
+#: The kinds a user may cap and `check_limit` will enforce. WITHDRAWAL is not
+#: here on purpose: see above.
 MONEY_LIMIT_KINDS = frozenset({LimitKind.DEPOSIT, LimitKind.LOSS, LimitKind.WAGER})
+
+#: Kinds `record_usage` accepts. Wider than MONEY_LIMIT_KINDS because tracking
+#: and capping are different questions.
+TRACKED_LIMIT_KINDS = MONEY_LIMIT_KINDS | {LimitKind.WITHDRAWAL}
 
 
 class LimitPeriod(models.TextChoices):

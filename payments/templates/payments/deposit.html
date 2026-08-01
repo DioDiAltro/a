@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Ricarica · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:40rem">
+
+  <header class="stack">
+    <h1>Ricarica</h1>
+    <p>
+      1 € = 1 biglia, sempre. Nessuna commissione sulla ricarica e nessun
+      arrotondamento: quello che paghi è quello che ricevi.
+    </p>
+    <p class="tiny muted">
+      Le biglie comprate con denaro reale sono <strong>biglie piene</strong>:
+      sono le uniche che puoi riconvertire in denaro.
+    </p>
+  </header>
+
+  <section class="card stack">
+    <form method="post" class="stack">
+      {% csrf_token %}
+      {{ form.as_div }}
+      <button class="btn btn--primary" type="submit">Vai al pagamento</button>
+    </form>
+    <p class="tiny muted" style="margin:0">
+      Il pagamento avviene sulla pagina sicura del fornitore. Le biglie vengono
+      emesse solo quando il pagamento risulta incassato davvero.
+    </p>
+  </section>
+
+  {% if deposits %}
+    <section class="stack">
+      <h2>Ultime ricariche</h2>
+      {% for deposit in deposits %}
+        <div class="card row-between wrap">
+          <div>
+            <p class="pot" style="margin:0">{{ deposit.euro }}</p>
+            <p class="tiny muted" style="margin:0">{{ deposit.created_at }}</p>
+          </div>
+          <div class="stack" style="text-align:right">
+            <span class="chip {% if deposit.state == 'succeeded' %}chip--win{% elif deposit.state == 'failed' %}chip--loss{% endif %}">
+              {{ deposit.state_label }}
+            </span>
+            {% if deposit.state == 'pending' %}
+              <a class="btn btn--ghost" href="{% url 'payments:deposit_checkout' deposit.pk %}">Riprendi</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      <p class="tiny muted"><a href="{% url 'payments:history' %}">Tutti i movimenti</a></p>
+    </section>
+  {% endif %}
+
+</div>
+{% endblock %}

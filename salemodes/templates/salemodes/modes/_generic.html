@@ -1,0 +1,21 @@
+{# Fallback UI for a mode that ships no partial of its own.
+
+   It exists so that registering a mode is genuinely enough to sell something:
+   a mechanic with no template still gets a working buy form rather than a
+   broken page. Modes that want more override `template_partial`. #}
+<section class="card stack" aria-label="Modalità di vendita">
+  <p class="card__label">{{ mode.label }}</p>
+  <p class="muted">{{ mode.description }}</p>
+  <p class="pot">{{ summary }}</p>
+
+  {% if is_open and not is_seller and user.is_authenticated %}
+    <form method="post" action="{{ action_url }}" class="stack">
+      {% csrf_token %}
+      <label class="field">
+        <span>Importo in scaglie</span>
+        <input type="number" name="amount_minor" min="1" required>
+      </label>
+      <button class="btn btn--primary" type="submit">Partecipa</button>
+    </form>
+  {% endif %}
+</section>

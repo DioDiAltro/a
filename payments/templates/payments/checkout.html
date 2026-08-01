@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Pagamento · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:36rem">
+
+  <header class="stack">
+    <h1>Pagamento</h1>
+    <p>
+      Stai ricaricando <strong>{{ deposit.euro }}</strong>, cioè
+      <strong>{{ deposit.biglie }}</strong> biglie piene.
+    </p>
+  </header>
+
+  <section class="card stack">
+    <p class="card__label">Stato</p>
+    <p class="pot" style="margin:0;font-size:1.6rem">{{ deposit.state_label }}</p>
+
+    {% if deposit.state == 'succeeded' %}
+      <p style="margin:0">
+        Ricarica completata. Le biglie ti aspettano in
+        <a href="{% url 'web:dashboard' %}">bacheca</a>: come ogni biglia che
+        entra qui, decidi tu se prenderle così o se rischiarle.
+      </p>
+    {% elif deposit.state == 'failed' %}
+      <p style="margin:0">
+        Il pagamento non è andato a buon fine{% if deposit.failure_message %} — {{ deposit.failure_message }}{% endif %}.
+        Non è stato addebitato nulla.
+      </p>
+      <a class="btn btn--primary" href="{% url 'payments:deposit' %}">Riprova</a>
+    {% else %}
+      {# The provider's payment element mounts here in a live deployment; the
+         client secret never leaves this page and is never logged. #}
+      <div id="payment-element"
+           data-client-secret="{{ deposit.client_secret }}"
+           data-publishable-key="{{ publishable_key }}"></div>
+      <p class="tiny muted" style="margin:0">
+        Completa il pagamento sulla pagina del fornitore. Questa pagina si
+        aggiorna da sola quando l'incasso è confermato — le biglie non vengono
+        emesse un istante prima.
+      </p>
+    {% endif %}
+  </section>
+
+  {% if can_simulate %}
+    {# Development only. `views.deposit_simulate` refuses to run when LIVE_MODE
+       is on or the provider is not the fake one — a button that fabricates a
+       settled payment would otherwise be a mint. #}
+    <section class="card stack">
+      <p class="card__label">Ambiente di sviluppo</p>
+      <p class="tiny muted" style="margin:0">
+        Nessun fornitore reale collegato. Questo bottone genera un webhook
+        firmato identico a quello vero e lo fa passare per la stessa verifica.
+      </p>
+      <form method="post" action="{% url 'payments:deposit_simulate' deposit.pk %}">
+        {% csrf_token %}
+        <button class="btn btn--safe" type="submit">Simula il pagamento</button>
+      </form>
+    </section>
+  {% endif %}
+
+  <p class="tiny muted">
+    <a href="{% url 'payments:history' %}">Movimenti</a> ·
+    <a href="{% url 'compliance:limits' %}">I tuoi limiti di deposito</a>
+  </p>
+
+</div>
+{% endblock %}

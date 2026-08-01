@@ -1,0 +1,79 @@
+{# The lottery. The meter is the whole story: it shows the minimum as a mark
+   rather than as the end of the bar, because there is no maximum and a bar
+   pinned at 100% would say the opposite. #}
+<section class="card stack" aria-label="Lotteria">
+  <div class="row-between">
+    <p class="card__label">{{ mode.label }}</p>
+    {% if progress.threshold_met %}
+      <span class="chip chip--gold">Minimo raggiunto</span>
+    {% endif %}
+  </div>
+
+  <p class="pot" style="font-size:2rem">
+    {{ progress.pot }} <span class="muted" style="font-size:1rem">su {{ progress.minimum }} minime</span>
+  </p>
+
+  <div class="meter" role="img"
+       aria-label="{{ progress.pot }} raccolte su {{ progress.minimum }} minime">
+    <div class="meter__fill {% if progress.threshold_met %}meter__fill--over{% endif %}"
+         style="width: {{ progress.percent }}%"></div>
+    <span class="meter__threshold" style="left: 100%"></span>
+  </div>
+
+  <p class="tiny muted">
+    {{ progress.tickets_sold }} biglietti da {{ progress.ticket_price }} ciascuno ·
+    {{ participant_count }} partecipant{{ participant_count|pluralize:"e,i" }} ·
+    non c'è un massimo, si può partecipare fino all'estrazione.
+  </p>
+
+  {% if sale.is_announced %}
+    <p class="chip chip--gold">
+      Estrazione annunciata — fra circa {{ progress.minutes_until_draw }} minut{{ progress.minutes_until_draw|pluralize:"o,i" }}
+    </p>
+    <p class="tiny muted">
+      L'estrazione è vincolante: avverrà comunque all'orario annunciato.
+      Fino ad allora si può ancora comprare un biglietto.
+    </p>
+  {% endif %}
+
+  {% if commitment_hash %}
+    <p class="tiny muted">
+      Impegno crittografico dell'estrazione:
+      <code class="num">{{ commitment_hash|slice:":16" }}…</code>
+      Il seme viene pubblicato dopo l'estrazione: potrai rifare il sorteggio da solo.
+    </p>
+  {% endif %}
+
+  {% if is_open and user.is_authenticated %}
+    {% if is_seller %}
+      <p class="tiny muted">Non puoi comprare biglietti della tua lotteria.</p>
+
+      {% if can_announce.allowed and not sale.is_announced %}
+        <form method="post" action="{{ announce_url }}">
+          {% csrf_token %}
+          <button class="btn btn--primary" type="submit">Annuncia l'estrazione</button>
+          <span class="tiny muted">Parte il preavviso: si estrae dopo.</span>
+        </form>
+      {% elif can_settle_early.allowed %}
+        <form method="post" action="{{ settle_url }}">
+          {% csrf_token %}
+          <button class="btn btn--primary" type="submit">Estrai ora</button>
+        </form>
+      {% else %}
+        <p class="tiny muted">{{ can_announce.reason|default:can_settle_early.reason }}</p>
+      {% endif %}
+    {% else %}
+      <form method="post" action="{{ action_url }}" class="row wrap">
+        {% csrf_token %}
+        <label class="field">
+          <span>Quanti biglietti</span>
+          <input type="number" name="units" value="1" min="1" required>
+        </label>
+        <button class="btn btn--primary" type="submit">Compra biglietti</button>
+      </form>
+      {% if my_participation %}
+        <p class="tiny muted">Hai già {{ my_participation.units }} biglietto/i in gioco.</p>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+</section>

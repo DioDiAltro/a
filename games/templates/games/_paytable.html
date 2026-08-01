@@ -1,0 +1,38 @@
+{% comment %}
+The full outcome table of one game, odds included.
+
+Shown before the player stakes, not after. Every row of this table is a promise
+the code proves at import time (`engine.assert_table_rtp`), so publishing it
+costs nothing and withholding it would be the only reason to withhold it.
+{% endcomment %}
+
+<details class="card stack">
+  <summary>Tabella dei premi · RTP {{ game.rtp_percent }}% · paga {{ game.hit_rate_percent }}% delle volte</summary>
+
+  <div style="overflow-x:auto">
+    <table>
+      <caption class="visually-hidden">Esiti possibili di {{ game.name }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">Esito</th>
+          <th scope="col">Paga</th>
+          <th scope="col">Probabilità</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in game.paytable %}
+          <tr>
+            <td>{{ row.label }}</td>
+            <td class="num">{{ row.multiplier }}</td>
+            <td class="num">{{ row.chance_percent }}%</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="tiny muted" style="margin:0">
+    Su {{ game.rtp_percent }} biglie restituite ogni 100 puntate, il resto è il
+    margine della piattaforma. Nel lungo periodo si perde: è così che funziona.
+  </p>
+</details>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Vendi qualcosa · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+  <header class="stack">
+    <h1>Vendi qualcosa</h1>
+    <p class="muted">
+      Scegli come venderlo. La modalità decide tutto il resto: prezzo, tempi,
+      chi se lo aggiudica.
+    </p>
+  </header>
+
+  {# Each mode documents itself here, straight from the registry. A mechanic
+     added next month appears in this list without touching this template. #}
+  <section class="grid grid-cards" aria-label="Modalità disponibili">
+    {% for mode in form.mode_help %}
+      <div class="card">
+        <p class="card__label">{{ mode.label }}</p>
+        <p class="tiny muted">{{ mode.description }}</p>
+        <p class="tiny"><code>{{ mode.key }}</code></p>
+      </div>
+    {% endfor %}
+  </section>
+
+  <form method="post" enctype="multipart/form-data" class="stack">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <label class="field">
+        <span>{{ field.label }}</span>
+        {{ field }}
+        {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+        {{ field.errors }}
+      </label>
+    {% endfor %}
+    <button class="btn btn--primary" type="submit">Pubblica</button>
+  </form>
+</div>
+{% endblock %}

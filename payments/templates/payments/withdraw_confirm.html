@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Conferma il prelievo · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:36rem">
+
+  <header class="stack">
+    <h1>{% if is_draft %}Conferma il prelievo{% else %}Il tuo prelievo{% endif %}</h1>
+  </header>
+
+  <section class="card stack">
+    <p class="card__label">Importo</p>
+    <p class="pot" style="margin:0;font-size:2rem">{{ withdrawal.euro }}</p>
+    <dl class="receipt">
+      <dt>Biglie piene ritirate</dt><dd>{{ withdrawal.biglie }}</dd>
+      <dt>Destinazione</dt><dd>IBAN che finisce con {{ withdrawal.destination_last4 }}</dd>
+      <dt>Stato</dt><dd>{{ withdrawal.state_label }}</dd>
+      {% if withdrawal.rejection_reason %}
+        <dt>Motivo</dt><dd>{{ withdrawal.rejection_reason }}</dd>
+      {% endif %}
+    </dl>
+  </section>
+
+  {% if is_draft %}
+    <section class="card stack">
+      <p style="margin:0">
+        Confermando, queste biglie escono subito dal saldo spendibile e vengono
+        messe da parte per il pagamento.
+      </p>
+      <p class="tiny muted" style="margin:0">
+        Non c'è nessun bottone per rimetterle in gioco: se hai deciso di
+        prelevare, quella decisione vale. Puoi sempre ricaricare in seguito, ma
+        deve essere una scelta nuova, non un ripensamento che ti proponiamo noi.
+      </p>
+      <form method="post">
+        {% csrf_token %}
+        <button class="btn btn--primary" type="submit">Conferma il prelievo</button>
+      </form>
+      <a class="btn btn--ghost" href="{% url 'payments:withdraw' %}">Cambia importo</a>
+    </section>
+  {% elif withdrawal.state == 'pending' %}
+    <section class="card stack">
+      <p style="margin:0">
+        Richiesta registrata. Le biglie sono già state messe da parte.
+        {% if withdrawal.requires_review %}
+          Un operatore sta controllando il prelievo: è un passaggio antiriciclaggio,
+          non un modo per farti aspettare.
+        {% endif %}
+      </p>
+    </section>
+  {% elif withdrawal.state == 'succeeded' %}
+    <section class="card stack">
+      <p style="margin:0">
+        Pagamento inviato alla tua banca. Le biglie corrispondenti sono state
+        ritirate dalla circolazione.
+      </p>
+    </section>
+  {% elif withdrawal.state == 'failed' %}
+    <section class="card stack">
+      <p style="margin:0">
+        Prelievo non completato. Le biglie sono tornate nel tuo saldo
+        spendibile, per intero.
+      </p>
+      <a class="btn btn--primary" href="{% url 'payments:withdraw' %}">Riprova</a>
+    </section>
+  {% endif %}
+
+  <p class="tiny muted">
+    {{ explanation }}
+  </p>
+
+</div>
+{% endblock %}

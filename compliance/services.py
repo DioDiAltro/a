@@ -31,6 +31,7 @@ from compliance.constants import (
     FULL_KYC_CUMULATIVE_THRESHOLD_MINOR,
     MONEY_LIMIT_KINDS,
     PERIOD_WINDOW,
+    TRACKED_LIMIT_KINDS,
     WITHDRAWAL_MINIMUM_TIER,
     ExclusionState,
     KycStatus,
@@ -80,9 +81,16 @@ def current_tier(user) -> str:
 
 
 def cumulative_withdrawn_minor(user) -> int:
-    """Lifetime withdrawals, used to decide when BASIC stops being enough."""
+    """Lifetime withdrawals, used to decide when BASIC stops being enough.
+
+    Counted under its own kind rather than piggybacking on DEPOSIT rows. An
+    earlier version filtered deposit usage by a `withdrawal:` reference prefix,
+    which forced `payments` to file withdrawals as deposits — so taking €500 out
+    silently consumed €500 of the user's *deposit* ceiling. Tracking and capping
+    are different questions and now have different kinds.
+    """
     total = LimitUsage.objects.filter(
-        user=user, kind=LimitKind.DEPOSIT, reference__startswith="withdrawal:"
+        user=user, kind=LimitKind.WITHDRAWAL
     ).aggregate(total=Sum("amount_minor"))["total"]
     return total or 0
 
@@ -162,7 +170,14 @@ def check_limit(user, kind: LimitKind, amount: Amount) -> None:
 
 
 def record_usage(user, kind: LimitKind, amount: Amount, *, reference: str = "") -> None:
-    """Log consumption against a limit. Call *after* the action succeeds."""
+    """Log consumption against a limit. Call *after* the action succeeds.
+
+    Accepts WITHDRAWAL as well as the cappable kinds — it is recorded for the
+    cumulative KYC threshold and never enforced as a ceiling.
+    """
+    if kind not in TRACKED_LIMIT_KINDS and kind != LimitKind.SESSION_TIME:
+        raise ValueError(f"{kind} is not a tracked usage kind.")
+
     LimitUsage.objects.create(
         user=user, kind=kind, amount_minor=amount.minor,
         asset=amount.asset, reference=reference,

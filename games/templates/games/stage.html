@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ definition.name }} · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:44rem">
+
+  {# The whole result, already committed server-side, handed to the canvas as
+     data. The animation reads it; it never produces it. A client that lies,
+     replays or disconnects mid-spin changes nothing. #}
+  {{ payload|json_script:"round-payload" }}
+
+  <header class="stack">
+    <h1>{{ definition.name }}</h1>
+    <p class="muted" style="margin:0">
+      Puntata <span class="pot">{{ round.stake }}</span>
+    </p>
+  </header>
+
+  <section class="stage" data-game="{{ round.game_key }}">
+    <canvas id="game-canvas" role="img"
+            aria-label="Animazione della partita: il risultato è già deciso e scritto qui sotto"></canvas>
+
+    <p class="stage__verdict {% if round.is_win %}stage__verdict--win{% else %}stage__verdict--loss{% endif %}"
+       data-shown>
+      {% if round.state == "settled" %}
+        {% if round.is_win %}
+          {{ round.outcome.label }} — <span class="pot">{{ round.payout }}</span>
+        {% else %}
+          {{ round.outcome.label }} — niente
+        {% endif %}
+      {% elif round.state == "cancelled" %}
+        {{ round.outcome.label }}
+      {% else %}
+        In corso
+      {% endif %}
+    </p>
+  </section>
+
+  {% if is_ladder and round.state == "in_progress" %}
+    {# The ladder is the one game with a decision in it. Both buttons carry the
+       same visual weight for the same reason the claim card's do. #}
+    <section class="card stack">
+      <p style="margin:0">
+        Sei al gradino <span class="num">{{ payload.outcome.revealed_rungs }}</span>.
+        {% if payload.outcome.revealed_rungs %}
+          Incassando ora prendi il valore di questo gradino.
+        {% else %}
+          Devi salire almeno una volta.
+        {% endif %}
+      </p>
+
+      <ol class="stack">
+        {% for rung in ladder_rungs %}
+          <li class="row-between">
+            <span>Gradino {{ forloop.counter }}</span>
+            <span class="num">{{ rung|floatformat:0 }} bp</span>
+          </li>
+        {% endfor %}
+      </ol>
+
+      <div class="row wrap">
+        <form method="post" action="{% url 'games:ladder_step' round.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn--risk">Sali di un gradino</button>
+        </form>
+        <form method="post" action="{% url 'games:ladder_cash_out' round.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn--safe"
+                  {% if not payload.outcome.revealed_rungs %}aria-disabled="true"{% endif %}>
+            Incassa
+          </button>
+        </form>
+      </div>
+    </section>
+  {% endif %}
+
+  {# The receipt. Shown unprompted after every round: a game that only proves
+     itself when challenged has the burden the wrong way round. #}
+  <section class="card stack">
+    <p class="card__label" style="margin:0">Ricevuta di equità</p>
+    <dl class="receipt">
+      <dt>Impronta del seme del server</dt>
+      <dd>{{ payload.fairness.server_seed_hash }}</dd>
+      <dt>Il tuo seme</dt>
+      <dd>{{ payload.fairness.client_seed }}</dd>
+      <dt>Nonce</dt>
+      <dd>{{ payload.fairness.nonce }}</dd>
+      <dt>Seme del server</dt>
+      <dd>{{ payload.fairness.server_seed|default:"— rivelato a partita conclusa" }}</dd>
+    </dl>
+    <p class="tiny" style="margin:0">
+      <a href="{% url 'games:verify' round.pk %}">Verifica questo risultato</a>
+    </p>
+  </section>
+
+  <p>
+    <a class="btn btn--ghost" href="{% url 'web:dashboard' %}">Torna alla bacheca</a>
+    <a class="btn btn--ghost" href="{% url 'games:history' %}">Storico</a>
+  </p>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module">
+  // The canvas modules take a decided result and make it feel earned. If either
+  // fails to load the verdict above is already on the page in text, which is the
+  // order that matters: the outcome is the document, the animation is the gloss.
+  const payload = JSON.parse(document.getElementById("round-payload").textContent);
+  const canvas = document.getElementById("game-canvas");
+
+  if (payload.game_key === "wheel") {
+    const { FortuneWheel } = await import("{% static 'js/games/wheel.js' %}");
+    new FortuneWheel(canvas, payload.outcome.wedges).spinTo(payload.outcome.wedge_index);
+  } else if (payload.game_key === "slot") {
+    const { SlotMachine } = await import("{% static 'js/games/slot.js' %}");
+    new SlotMachine(canvas).spin(payload.outcome.reels);
+  }
+</script>
+{% endblock %}

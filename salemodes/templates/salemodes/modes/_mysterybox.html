@@ -1,0 +1,49 @@
+{# Mystery box. The odds table is not fine print — it is the product, so it is
+   rendered before the buy button rather than behind a link. #}
+<section class="card stack" aria-label="Scatola misteriosa">
+  <p class="card__label">{{ mode.label }}</p>
+  <p class="pot" style="font-size:2rem">{{ progress.price }}</p>
+
+  <div class="meter" role="img"
+       aria-label="{{ progress.sold }} scatole vendute su {{ progress.capacity }}">
+    <div class="meter__fill" style="width: {{ progress.percent }}%"></div>
+  </div>
+  <p class="tiny muted">
+    {{ progress.remaining }} scatol{{ progress.remaining|pluralize:"a,e" }} ancora disponibil{{ progress.remaining|pluralize:"e,i" }}
+    su {{ progress.capacity }}.
+  </p>
+
+  <table class="tiny">
+    <caption class="card__label">Cosa c'è dentro</caption>
+    <thead>
+      <tr><th scope="col">Premio</th><th scope="col">Quantità</th><th scope="col">Probabilità</th></tr>
+    </thead>
+    <tbody>
+      {% for prize in progress.odds %}
+        <tr>
+          <td>{{ prize.label }}</td>
+          <td class="num">{{ prize.quantity }}</td>
+          <td class="num">{{ prize.basis_points|floatformat:0 }}‱</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if commitment_hash %}
+    <p class="tiny muted">
+      Impegno crittografico dell'assegnazione:
+      <code class="num">{{ commitment_hash|slice:":16" }}…</code>
+    </p>
+  {% endif %}
+
+  {% if is_open and not is_seller and user.is_authenticated %}
+    <form method="post" action="{{ action_url }}" class="row wrap">
+      {% csrf_token %}
+      <label class="field">
+        <span>Quante scatole</span>
+        <input type="number" name="units" value="1" min="1" max="{{ progress.remaining }}" required>
+      </label>
+      <button class="btn btn--primary" type="submit">Prendi una scatola</button>
+    </form>
+  {% endif %}
+</section>

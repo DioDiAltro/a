@@ -1,0 +1,37 @@
+{# Auction. The minimum next bid is stated as a number, not implied: an auction
+   that makes you compute the increment yourself loses bids it should have had. #}
+<section class="card stack" aria-label="Asta">
+  <p class="card__label">{{ mode.label }}</p>
+
+  {% if progress.top_bid %}
+    <p class="pot" style="font-size:2rem">{{ progress.top_bid }}</p>
+    <p class="tiny muted">{{ progress.bid_count }} offert{{ progress.bid_count|pluralize:"a,e" }}</p>
+  {% else %}
+    <p class="pot" style="font-size:2rem">{{ progress.start_price }}</p>
+    <p class="tiny muted">Base d'asta — nessuna offerta.</p>
+  {% endif %}
+
+  <p class="tiny muted">
+    Chiude il {{ sale.closes_at|date:"j F Y, H:i" }}.
+    {% if progress.extensions %}
+      Prorogata {{ progress.extensions }} volt{{ progress.extensions|pluralize:"a,e" }}
+      per offerte last-second.
+    {% endif %}
+  </p>
+
+  {% if is_open and not is_seller and user.is_authenticated %}
+    <form method="post" action="{{ action_url }}" class="row wrap">
+      {% csrf_token %}
+      <label class="field">
+        <span>La tua offerta (minimo {{ progress.minimum_bid }})</span>
+        <input type="number" name="amount_minor" min="{{ progress.minimum_bid.minor }}"
+               value="{{ progress.minimum_bid.minor }}" required>
+      </label>
+      <button class="btn btn--primary" type="submit">Rilancia</button>
+    </form>
+    <p class="tiny muted">
+      Se qualcuno ti supera, le tue biglie tornano subito disponibili.
+      Un'offerta negli ultimi due minuti sposta in avanti la chiusura.
+    </p>
+  {% endif %}
+</section>

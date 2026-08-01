@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Scegli il gioco · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:52rem">
+
+  <header class="stack">
+    <h1>Rischi <span class="pot">{{ credit.amount }}</span></h1>
+    <p class="muted">
+      {{ credit.source_label }}. Scegli con cosa deciderle. Ogni gioco
+      restituisce in media il {{ games.0.rtp_percent }}% di quanto viene puntato —
+      cambia il ritmo, non il margine.
+    </p>
+  </header>
+
+  <div class="grid grid-cards">
+    {% for game in games %}
+      <form method="post" action="{% url 'games:play' credit.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="game_key" value="{{ game.key }}">
+        <article class="card card--interactive stack">
+          <h2 style="margin:0">{{ game.name }}</h2>
+          <p class="muted tiny" style="margin:0">{{ game.tagline }}</p>
+          <p class="row" style="margin:0">
+            <span class="chip">RTP {{ game.rtp_percent }}%</span>
+            <span class="chip">{{ game.hit_rate_percent }}% di esiti paganti</span>
+          </p>
+          <button type="submit" class="btn btn--risk">Gioca {{ game.name }}</button>
+        </article>
+      </form>
+    {% endfor %}
+  </div>
+
+  {# The way out, kept in plain sight. Someone who has already clicked "rischia"
+     is exactly the person who should still be able to change their mind without
+     hunting for the link. #}
+  <form method="post" action="{% url 'web:claim_safe' credit.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn--safe">
+      Ripensaci: prendile e basta (meno l'1%)
+    </button>
+  </form>
+
+  {% for game in games %}
+    {% include "games/_paytable.html" with game=game %}
+  {% endfor %}
+
+  {% include "games/_seed_form.html" %}
+
+</div>
+{% endblock %}

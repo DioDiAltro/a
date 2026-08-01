@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Verifica partita · biglie{% endblock %}
+{% block description %}Rifai il calcolo e controlla il risultato tu stesso.{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:46rem">
+
+  {% comment %}
+  Public on purpose — no login. A proof only the person who lost can inspect is
+  a weaker guarantee than one they can hand to somebody else, and the link is
+  meant to be shareable.
+  {% endcomment %}
+
+  <header class="stack">
+    <h1>Verifica di una partita</h1>
+    <p class="muted" style="margin:0">
+      {{ round.game_key }} · {{ round.created_at|date:"d/m/Y H:i" }} ·
+      puntata <span class="pot">{{ round.stake }}</span>,
+      vincita <span class="pot">{{ round.payout }}</span>
+    </p>
+  </header>
+
+  <section class="card stack">
+    {% if verified is None %}
+      <p class="row" style="margin:0">
+        <span class="chip">in attesa</span>
+        Il seme del server non è ancora stato rivelato: la partita non è conclusa.
+      </p>
+    {% elif verified %}
+      <p class="row" style="margin:0">
+        <span class="chip chip--win">verificata</span>
+        Rifacendo il calcolo dal seme rivelato si ottiene esattamente questo esito.
+      </p>
+    {% else %}
+      {# If this ever renders, the RNG pipeline is compromised and games must be
+         halted — see `core.exceptions.FairnessViolation`. It is displayed rather
+         than hidden because the player is the person who most needs to know. #}
+      <p class="row" style="margin:0">
+        <span class="chip chip--loss">non verificata</span>
+        Il ricalcolo non coincide. Segnalacelo: la partita va annullata e la
+        puntata restituita.
+      </p>
+    {% endif %}
+  </section>
+
+  <section class="card stack">
+    <h2>I tre valori</h2>
+    <dl class="receipt">
+      <dt>Impronta pubblicata prima della partita</dt>
+      <dd>{{ fairness.server_seed_hash }}</dd>
+      <dt>Seme del server (rivelato dopo)</dt>
+      <dd>{{ fairness.server_seed|default:"non ancora rivelato" }}</dd>
+      <dt>Il tuo seme</dt>
+      <dd>{{ fairness.client_seed }}</dd>
+      <dt>Nonce</dt>
+      <dd>{{ fairness.nonce }}</dd>
+      <dt>Messaggio HMAC del primo blocco</dt>
+      <dd>{{ fairness.message }}</dd>
+    </dl>
+  </section>
+
+  <section class="card stack">
+    <h2>Come rifarlo</h2>
+    <ol class="stack">
+      {% for step in steps %}<li>{{ step }}</li>{% endfor %}
+    </ol>
+    <pre style="overflow-x:auto"><code>{{ snippet }}</code></pre>
+    <p class="tiny muted" style="margin:0">
+      Solo libreria standard di Python. Nessuna dipendenza, niente da installare.
+    </p>
+  </section>
+
+  <section class="card stack">
+    <h2>L'esito registrato</h2>
+    <dl class="receipt">
+      {% for key, value in outcome.items %}
+        <dt>{{ key }}</dt>
+        <dd>{{ value }}</dd>
+      {% endfor %}
+    </dl>
+  </section>
+
+  <p class="tiny">
+    <a href="{% url 'web:fairness' %}">Il meccanismo, spiegato per esteso</a>
+  </p>
+
+</div>
+{% endblock %}

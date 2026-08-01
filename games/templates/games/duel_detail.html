@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Sfida · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:40rem">
+
+  <header class="stack">
+    <h1>{{ duel.challenger.handle }} contro {{ duel.defender.handle }}</h1>
+    <p class="row" style="margin:0">
+      <span class="chip">{{ duel.get_state_display|default:duel.state }}</span>
+      <span class="pot">{{ duel.stake }}</span> a testa ·
+      piatto <span class="pot">{{ duel.pot }}</span>
+    </p>
+    {% if duel.message %}<p class="muted" style="margin:0">«{{ duel.message }}»</p>{% endif %}
+  </header>
+
+  {% if duel.state == "pending" %}
+    <section class="card stack">
+      <p style="margin:0">
+        In attesa di risposta. Scade il {{ duel.expires_at|date:"d/m/Y H:i" }};
+        se nessuno risponde la posta torna intera a chi ha sfidato.
+      </p>
+      {% if duel.defender_id == user.pk %}
+        <div class="row wrap">
+          <form method="post" action="{% url 'games:duel_accept' duel.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--risk">Accetta e tira</button>
+          </form>
+          <form method="post" action="{% url 'games:duel_decline' duel.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--safe">Rifiuta</button>
+          </form>
+        </div>
+      {% endif %}
+    </section>
+
+  {% elif duel.state == "resolved" %}
+    <section class="stage stack">
+      <p class="stage__verdict {% if duel.winner_id == user.pk %}stage__verdict--win{% else %}stage__verdict--loss{% endif %}"
+         data-shown>
+        Ha vinto {{ duel.winner.handle }}
+      </p>
+      {% with detail=duel.round.public_detail %}
+        <p class="num" style="margin:0">
+          {{ duel.challenger.handle }} {{ detail.challenger_roll }} ·
+          {{ duel.defender.handle }} {{ detail.defender_roll }}
+          {% if detail.ties %}<span class="tiny muted">({{ detail.ties }} pareggi ritirati)</span>{% endif %}
+        </p>
+      {% endwith %}
+    </section>
+
+    <section class="card stack">
+      {# The arithmetic in full. A pot split the loser cannot check is a pot the
+         loser has to take on faith, and this is the one number they will care
+         about most. #}
+      <p class="card__label" style="margin:0">Come si divide il piatto</p>
+      <dl class="receipt">
+        <dt>Piatto</dt><dd>{{ duel.pot }}</dd>
+        <dt>Rake della piattaforma</dt><dd>{{ duel.rake_minor }} scaglie</dd>
+        <dt>Al vincitore</dt>
+        <dd>{{ duel.pot }} meno il rake, riscattabile dalla bacheca</dd>
+      </dl>
+      <p class="tiny" style="margin:0">
+        <a href="{% url 'games:verify' duel.round.pk %}">Verifica il tiro</a>
+      </p>
+    </section>
+
+  {% else %}
+    <section class="card">
+      <p style="margin:0">
+        Sfida {{ duel.state }}. Le poste bloccate sono state restituite per intero.
+      </p>
+    </section>
+  {% endif %}
+
+  <p><a class="btn btn--ghost" href="{% url 'games:duels' %}">Tutte le sfide</a></p>
+
+</div>
+{% endblock %}

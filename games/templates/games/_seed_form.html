@@ -1,0 +1,35 @@
+{% comment %}
+The commit-reveal, made operable.
+
+The hash of the *next* round's server seed is shown before the player chooses
+anything, and the seed they contribute is theirs to change at any moment. Those
+two facts together are the entire guarantee; a page that showed one without the
+other would be decoration.
+{% endcomment %}
+
+<section class="card stack">
+  <p class="card__label" style="margin:0">Equità verificabile</p>
+
+  <dl class="receipt">
+    <dt>Impronta del prossimo seme del server</dt>
+    <dd>{{ commitment.server_seed_hash }}</dd>
+  </dl>
+
+  <form method="post" action="{% url 'games:client_seed' %}" class="stack">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <div class="field">
+      <label for="id_client_seed">Il tuo seme</label>
+      {{ seed_form.client_seed }}
+      <p class="help">
+        Lo scegli tu, dopo aver visto l'impronta qui sopra. È questo ordine a
+        rendere l'impronta vincolante: non possiamo adattare il nostro seme al tuo.
+      </p>
+    </div>
+    <button type="submit" class="btn btn--ghost">Cambia seme</button>
+  </form>
+
+  <p class="tiny muted" style="margin:0">
+    <a href="{% url 'web:fairness' %}">Come si verifica un risultato</a>
+  </p>
+</section>

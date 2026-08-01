@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Preleva · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:42rem">
+
+  <header class="stack">
+    <h1>Preleva</h1>
+    <p>
+      Puoi prelevare <strong>{{ withdrawable }}</strong> in biglie piene.
+      1 biglia = 1 €, senza commissioni di prelievo.
+    </p>
+  </header>
+
+  {% if non_withdrawable %}
+    {# The anti-laundering line, stated before the user types an amount rather
+       than as a refusal after. #}
+    <section class="card stack">
+      <p class="card__label">Queste non si possono prelevare</p>
+      {% for asset, amount in non_withdrawable %}
+        <p class="row-between" style="margin:0">
+          <span>{{ asset.label }}</span>
+          <span class="num">{{ amount }}</span>
+        </p>
+      {% endfor %}
+      <p class="tiny muted" style="margin:0">{{ explanation }}</p>
+      <p class="tiny muted" style="margin:0">
+        Restano tue: le spendi sul mercato e le giochi come le altre.
+      </p>
+    </section>
+  {% endif %}
+
+  <section class="card stack">
+    <form method="post" class="stack">
+      {% csrf_token %}
+      {{ form.as_div }}
+      <button class="btn btn--primary" type="submit">Continua</button>
+    </form>
+    <p class="tiny muted" style="margin:0">
+      Verifica identità: <span class="chip">{{ kyc_tier }}</span> —
+      <a href="{% url 'compliance:kyc' %}">gestisci la verifica</a>.
+      I prelievi sopra una certa soglia passano da un controllo umano; nel
+      frattempo le biglie restano messe da parte per te.
+    </p>
+  </section>
+
+  {% if withdrawals %}
+    <section class="stack">
+      <h2>Ultimi prelievi</h2>
+      {% for withdrawal in withdrawals %}
+        <div class="card row-between wrap">
+          <div>
+            <p class="pot" style="margin:0">{{ withdrawal.euro }}</p>
+            <p class="tiny muted" style="margin:0">
+              {{ withdrawal.created_at }}
+              {% if withdrawal.destination_last4 %}· IBAN ••{{ withdrawal.destination_last4 }}{% endif %}
+            </p>
+          </div>
+          <div class="stack" style="text-align:right">
+            <span class="chip {% if withdrawal.state == 'succeeded' %}chip--win{% elif withdrawal.state == 'failed' %}chip--loss{% endif %}">
+              {{ withdrawal.state_label }}
+            </span>
+            <a class="btn btn--ghost" href="{% url 'payments:withdraw_confirm' withdrawal.pk %}">Dettagli</a>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
+  {% endif %}
+
+</div>
+{% endblock %}

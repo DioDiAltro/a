@@ -1,0 +1,16 @@
+{# Buy it now. One number, one button. #}
+<section class="card stack" aria-label="Prezzo fisso">
+  <p class="card__label">{{ mode.label }}</p>
+  <p class="pot" style="font-size:2rem">{{ progress.price }}</p>
+
+  {% if is_open and not is_seller and user.is_authenticated %}
+    <form method="post" action="{{ action_url }}">
+      {% csrf_token %}
+      <input type="hidden" name="amount_minor" value="{{ progress.price.minor }}">
+      <button class="btn btn--primary" type="submit">Compra ora</button>
+    </form>
+    <p class="tiny muted">
+      Per gli oggetti fisici l'importo resta bloccato finché non confermi di aver ricevuto.
+    </p>
+  {% endif %}
+</section>

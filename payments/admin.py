@@ -62,7 +62,9 @@ class WithdrawalAdmin(admin.ModelAdmin):
     list_filter = ("state", "requires_review", "approved_automatically", "created_at")
     search_fields = ("user__email", "provider_reference", "id")
     date_hierarchy = "created_at"
-    ordering = ("-created_at",)
+    # Money waiting on a human comes first, oldest first inside that group: the
+    # reviewer should never have to sort a list to find who has waited longest.
+    ordering = ("-requires_review", "created_at")
     actions = ("approve_selected", "reject_selected")
 
     fields = ("user", "biglie_minor", "asset", "euro_minor", "state",
@@ -77,14 +79,6 @@ class WithdrawalAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None) -> bool:
         return False
-
-    def get_changelist_instance(self, request):
-        # Land on the queue that needs a person, not on everything ever paid.
-        if not request.GET and "requires_review" not in request.GET:
-            request.GET = request.GET.copy()
-            request.GET["state__exact"] = PaymentState.PENDING
-            request.META["QUERY_STRING"] = request.GET.urlencode()
-        return super().get_changelist_instance(request)
 
     @admin.display(description="Biglie", ordering="biglie_minor")
     def biglie_display(self, obj: Withdrawal) -> str:

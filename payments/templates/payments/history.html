@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Movimenti · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:42rem">
+
+  <header class="stack">
+    <h1>Movimenti in denaro</h1>
+    <p class="tiny muted">
+      Solo entrate e uscite in euro. Vincite, regali e riscatti vivono in
+      <a href="{% url 'web:dashboard' %}">bacheca</a>.
+    </p>
+  </header>
+
+  <section class="stack">
+    <h2>Ricariche</h2>
+    {% for deposit in deposits %}
+      <div class="card row-between wrap">
+        <div>
+          <p class="pot" style="margin:0">+ {{ deposit.euro }}</p>
+          <p class="tiny muted" style="margin:0">{{ deposit.created_at }} · {{ deposit.biglie }} biglie piene</p>
+        </div>
+        <span class="chip {% if deposit.state == 'succeeded' %}chip--win{% elif deposit.state == 'failed' %}chip--loss{% endif %}">
+          {{ deposit.state_label }}
+        </span>
+      </div>
+    {% empty %}
+      <p class="muted">Nessuna ricarica.</p>
+    {% endfor %}
+  </section>
+
+  <section class="stack">
+    <h2>Prelievi</h2>
+    {% for withdrawal in withdrawals %}
+      <div class="card row-between wrap">
+        <div>
+          <p class="pot" style="margin:0">− {{ withdrawal.euro }}</p>
+          <p class="tiny muted" style="margin:0">
+            {{ withdrawal.created_at }}
+            {% if withdrawal.destination_last4 %}· IBAN ••{{ withdrawal.destination_last4 }}{% endif %}
+          </p>
+        </div>
+        <a class="chip {% if withdrawal.state == 'succeeded' %}chip--win{% elif withdrawal.state == 'failed' %}chip--loss{% endif %}"
+           href="{% url 'payments:withdraw_confirm' withdrawal.pk %}">{{ withdrawal.state_label }}</a>
+      </div>
+    {% empty %}
+      <p class="muted">Nessun prelievo.</p>
+    {% endfor %}
+  </section>
+
+</div>
+{% endblock %}

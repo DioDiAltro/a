@@ -177,6 +177,22 @@ class LotteryMode(SaleMode):
 
     # -- drawing ------------------------------------------------------------
 
+    def can_announce_settlement(self, sale) -> Decision:
+        """Announcing is allowed once the minimum is in, and not before.
+
+        The threshold is the seller's side of the bargain: below it, the
+        participants were promised a deadline, and an early draw would be the
+        seller changing the rules after seeing the ticket list.
+        """
+        if not sale.config.get("early_draw_allowed", True):
+            return Decision.no("Questa lotteria non prevede l'estrazione anticipata.")
+        if sale.sale_state is not SaleState.THRESHOLD_MET:
+            return Decision.no(
+                f"Puoi annunciare l'estrazione solo dopo il minimo di "
+                f"{sale.amount(int(sale.config['minimum_minor']))}. Ora sei a {sale.total}."
+            )
+        return Decision.yes("Puoi annunciare l'estrazione.")
+
     def can_settle_early(self, sale) -> Decision:
         """The three guards, in the order a seller meets them.
 
@@ -265,6 +281,7 @@ class LotteryMode(SaleMode):
             "threshold_met": sale.sale_state is SaleState.THRESHOLD_MET,
             "announced": sale.is_announced,
             "seconds_until_draw": sale.seconds_until_draw,
+            "minutes_until_draw": (sale.seconds_until_draw + 59) // 60,
             "early_draw_allowed": bool(sale.config.get("early_draw_allowed", True)),
         }
 

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}I tuoi ordini · biglie{% endblock %}
+
+{% block content %}
+{# Reachable even while self-excluded: the middleware allowlists this route on
+   purpose. Someone who has stopped playing still has parcels in the post. #}
+<div class="stack-lg">
+  <header class="stack">
+    <h1>Ordini</h1>
+    <p class="muted">Quello che hai comprato e quello che hai venduto.</p>
+  </header>
+
+  <section class="stack" aria-label="Ordini">
+    {% for order in orders %}
+      <article class="card row-between">
+        <div class="stack">
+          <a href="{{ order.get_absolute_url }}"><strong>{{ order.listing.title }}</strong></a>
+          <p class="tiny muted">
+            {% if order.buyer_id == user.pk %}Comprato da {{ order.seller.handle }}
+            {% else %}Venduto a {{ order.buyer.handle }}{% endif %}
+            · {{ order.created_at|date:"j F Y" }}
+          </p>
+        </div>
+        <div class="stack" style="text-align:right">
+          <span class="pot">{{ order.gross }}</span>
+          <span class="chip">{{ order.get_state_display }}</span>
+        </div>
+      </article>
+    {% empty %}
+      <p class="muted">Nessun ordine per ora.</p>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

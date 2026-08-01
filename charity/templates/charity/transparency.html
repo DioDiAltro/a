@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Beneficenza · biglie{% endblock %}
+{% block description %}Quanto abbiamo messo da parte, quanto è ancora nel fondo e quanto è già partito.{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:52rem">
+
+  <header class="stack">
+    <h1>Dove finisce il {{ percent|floatformat:"-2" }}%</h1>
+    <p class="muted">
+      Nessun login, nessun contatore di marketing. I numeri qui sotto vengono dal
+      libro mastro, letti adesso.
+    </p>
+  </header>
+
+  <section class="card center stack" aria-labelledby="raccolto">
+    <p class="card__label" id="raccolto">Messo da parte finora</p>
+    <p class="charity-total" style="margin:0">{{ raised }}</p>
+    <p class="tiny muted" style="margin:0">{{ asset.label }}</p>
+  </section>
+
+  {# Three numbers that only mean something together: raccolto è cumulativo,
+     nel fondo è quello che non è ancora partito, versato è quello arrivato. #}
+  <section class="grid grid-cards" aria-label="Riepilogo">
+    <div class="card stack">
+      <p class="card__label">Ancora nel fondo</p>
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ in_pool }}</p>
+      <p class="tiny muted" style="margin:0">Saldo reale del conto beneficenza.</p>
+    </div>
+    <div class="card stack">
+      <p class="card__label">Assegnato, in attesa di bonifico</p>
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ awaiting_transfer }}</p>
+      <p class="tiny muted" style="margin:0">Già diviso tra le associazioni.</p>
+    </div>
+    <div class="card stack">
+      <p class="card__label">Versato davvero</p>
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ paid }}</p>
+      <p class="tiny muted" style="margin:0">Con estremi del bonifico.</p>
+    </div>
+  </section>
+
+  <section class="card stack" aria-labelledby="chi">
+    <h2 id="chi">Chi riceve</h2>
+
+    {% if beneficiaries %}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Associazione</th>
+            <th scope="col">Quota</th>
+            <th scope="col">Assegnato</th>
+            <th scope="col">Versato</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in beneficiaries %}
+            <tr>
+              <td>
+                <a href="{% url 'charity:beneficiary' row.beneficiary.slug %}">
+                  {{ row.beneficiary.name }}
+                </a>
+                {% if not row.beneficiary.is_active %}
+                  <span class="chip">non più attiva</span>
+                {% endif %}
+              </td>
+              <td class="num">{{ row.share_percent }}%</td>
+              <td class="num">{{ row.committed }}</td>
+              <td class="num">{{ row.paid }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p class="tiny muted">
+        La quota è il peso relativo di ogni associazione sulla prossima
+        ripartizione. La divisione usa i pesi correnti e non perde nemmeno una
+        scaglia: i resti vanno ai pesi più alti, in ordine definito.
+      </p>
+    {% else %}
+      <p class="muted">
+        Nessuna associazione configurata: il fondo resta dov'è finché non ne
+        viene indicata una. Il denaro non torna alla piattaforma.
+      </p>
+    {% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="versamenti">
+    <h2 id="versamenti">Ultimi versamenti</h2>
+    {% if payouts %}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Data</th>
+            <th scope="col">Associazione</th>
+            <th scope="col">Importo</th>
+            <th scope="col">Stato</th>
+            <th scope="col">Riferimento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payout in payouts %}
+            <tr>
+              <td>{{ payout.paid_at|default:payout.created_at|date:"d/m/Y" }}</td>
+              <td>{{ payout.beneficiary.name }}</td>
+              <td class="num">{{ payout.amount }}</td>
+              <td>{{ payout.get_state_display }}</td>
+              <td class="tiny muted">{{ payout.reference|default:"—" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">Ancora nessun versamento.</p>
+    {% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="come">
+    <h2 id="come">Come viene calcolato</h2>
+    <p>
+      Il {{ percent|floatformat:"-2" }}% si applica ai
+      <strong>ricavi della piattaforma</strong> — commissioni, margine dei
+      giochi, rake delle sfide — non al volume transato.
+    </p>
+    <p class="tiny muted">
+      La differenza conta, quindi la scriviamo. Su una vendita da 100 biglie la
+      piattaforma incassa 5 biglie di commissione: il 3% del volume sarebbero 3
+      biglie su 5, e su gran parte delle transazioni il sito pagherebbe per
+      operare. Un sito che chiude versa zero. Applicato ai ricavi, il prelievo è
+      sostenibile e quindi ricorrente.
+    </p>
+    <p class="tiny muted">
+      Il prelievo avviene nella stessa transazione che registra il ricavo, non
+      con un lavoro notturno: per questo il totale qui sopra non può divergere da
+      quello che è realmente successo.
+    </p>
+  </section>
+
+</div>
+{% endblock %}

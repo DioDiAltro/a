@@ -1,0 +1,41 @@
+{# Group buy. The count is the headline, not the price: what a hesitant buyer
+   wants to know is whether this is going to happen at all. #}
+<section class="card stack" aria-label="Acquisto di gruppo">
+  <p class="card__label">{{ mode.label }}</p>
+
+  <p class="pot" style="font-size:2rem">
+    {{ progress.joined }} <span class="muted" style="font-size:1rem">su {{ progress.min_buyers }}</span>
+  </p>
+
+  <div class="meter" role="img"
+       aria-label="{{ progress.joined }} acquirenti su {{ progress.min_buyers }}">
+    <div class="meter__fill" style="width: {{ progress.percent }}%"></div>
+  </div>
+
+  <p class="tiny muted">
+    {{ progress.unit_price }} a testa.
+    {% if progress.missing %}
+      Mancano {{ progress.missing }} person{{ progress.missing|pluralize:"a,e" }}: se non si arriva,
+      nessuno paga e le biglie tornano intere.
+    {% else %}
+      Gruppo completo.
+    {% endif %}
+  </p>
+
+  {% if is_open and not is_seller and user.is_authenticated and not my_participation %}
+    <form method="post" action="{{ action_url }}">
+      {% csrf_token %}
+      <input type="hidden" name="amount_minor" value="{{ progress.unit_price.minor }}">
+      <button class="btn btn--primary" type="submit">Prendi un posto</button>
+    </form>
+  {% elif my_participation %}
+    <p class="chip">Sei dentro</p>
+  {% endif %}
+
+  {% if is_seller and can_settle_early.allowed %}
+    <form method="post" action="{{ settle_url }}">
+      {% csrf_token %}
+      <button class="btn btn--primary" type="submit">Chiudi il gruppo ora</button>
+    </form>
+  {% endif %}
+</section>

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Economia · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg">
+
+  <header class="stack">
+    <h1>Economia</h1>
+    <p class="muted">
+      Fonti contro drenaggi negli ultimi {{ window_days }} giorni. Solo un
+      deposito confermato in euro conia biglie: tutto il resto sposta valore che
+      esisteva già.
+    </p>
+  </header>
+
+  {% if alert %}
+    <section class="card stack" role="alert"
+             style="border-color:color-mix(in oklab, var(--loss) 55%, var(--line))">
+      <p class="card__label">Allarme · {{ alert.code }}</p>
+      <p>{{ alert.message }}</p>
+      <dl class="tiny muted">
+        {% for key, value in alert.detail.items %}
+          <dt>{{ key }}</dt><dd class="num">{{ value }}</dd>
+        {% endfor %}
+      </dl>
+    </section>
+  {% else %}
+    <p class="chip chip--win">Nessuno scostamento rilevato</p>
+  {% endif %}
+
+  <section class="grid grid-cards" aria-label="Fonti">
+    <div class="card stack">
+      <p class="card__label">Coniate (depositi)</p>
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ figures.sources.minted_minor }}</p>
+      <p class="tiny muted" style="margin:0">L'unica emissione del sistema.</p>
+    </div>
+    <div class="card stack">
+      <p class="card__label">Pagate dal bankroll</p>
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ figures.sources.house_paid_minor }}</p>
+      <p class="tiny muted" style="margin:0">Vincite nette: margini di ieri che cambiano proprietario.</p>
+    </div>
+    <div class="card stack">
+      <p class="card__label">Drip passivo</p>
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ figures.sources.drip_minor }}</p>
+      <p class="tiny muted" style="margin:0">Redistribuzione dal pool, mai conio.</p>
+    </div>
+    <div class="card stack">
+      <p class="card__label">Ricavi riconosciuti</p>
+      <p class="pot" style="font-size:1.6rem;margin:0">{{ figures.sinks.revenue_minor }}</p>
+      <p class="tiny muted" style="margin:0">
+        di cui {{ figures.sinks.of_which_charity_minor }} in beneficenza e
+        {{ figures.sinks.of_which_redistribution_minor }} al pool.
+      </p>
+    </div>
+  </section>
+
+  <section class="card stack" aria-labelledby="saldo">
+    <h2 id="saldo">Saldo netto verso i giocatori</h2>
+    <p class="pot" style="font-size:2rem;margin:0">{{ figures.net_to_users_minor }}</p>
+    <p class="tiny muted">
+      Fonti meno drenaggi, in unità minori. Positivo significa che nella finestra
+      è fluito valore verso i giocatori — normale dopo una giornata fortunata,
+      un problema se resta positivo per settimane.
+    </p>
+    <dl class="tiny">
+      <dt>Nel pool redistribuzione ({{ drip_asset.label }})</dt>
+      <dd class="num">{{ figures.pools.redistribution }}</dd>
+      <dt>Coniato in totale (stima superiore)</dt>
+      <dd class="num">{{ supply.upper_bound }}</dd>
+    </dl>
+    <p class="tiny muted">{{ supply.why }}</p>
+  </section>
+
+  <section class="card stack" aria-labelledby="rtp">
+    <h2 id="rtp">RTP realizzato</h2>
+    {% if audits %}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Gioco</th>
+            <th scope="col">Round</th>
+            <th scope="col">Realizzato</th>
+            <th scope="col">Configurato</th>
+            <th scope="col">Scostamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for audit in audits %}
+            <tr>
+              <td>{{ audit.game_key }}</td>
+              <td class="num">{{ audit.rounds }}</td>
+              <td class="num">{{ audit.realised_percent|floatformat:2 }}%</td>
+              <td class="num">{{ audit.configured_percent|floatformat:2 }}%</td>
+              <td class="num">
+                {% if audit.is_alert %}
+                  <span class="chip chip--loss">{{ audit.drift_bp }} bp</span>
+                {% else %}
+                  {{ audit.drift_bp }} bp
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p class="tiny muted">
+        Uno scostamento significa che una tabella dei premi è sbagliata, e le
+        tabelle sono la promessa fatta al giocatore.
+      </p>
+    {% else %}
+      <p class="muted">Nessun round ancora auditato.</p>
+    {% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="drip">
+    <h2 id="drip">Ultime biglie piovute</h2>
+    {% if recent_drips %}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Quando</th>
+            <th scope="col">A chi</th>
+            <th scope="col">Quanto</th>
+            <th scope="col">Peso</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for award in recent_drips %}
+            <tr>
+              <td>{{ award.awarded_at|date:"d/m H:i" }}</td>
+              <td>{{ award.user.handle }}</td>
+              <td class="num">{{ award.amount }}</td>
+              <td class="num">{{ award.weight }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">Nessun drip erogato: se il pool è vuoto, non piove.</p>
+    {% endif %}
+  </section>
+
+  {% if snapshots %}
+    <section class="card stack" aria-labelledby="storico">
+      <h2 id="storico">Fotografie precedenti</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Quando</th>
+            <th scope="col">Coniate</th>
+            <th scope="col">Ricavi</th>
+            <th scope="col">Netto</th>
+            <th scope="col">Allarme</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for snapshot in snapshots %}
+            <tr>
+              <td>{{ snapshot.taken_at|date:"d/m H:i" }}</td>
+              <td class="num">{{ snapshot.minted_minor }}</td>
+              <td class="num">{{ snapshot.revenue_minor }}</td>
+              <td class="num">{{ snapshot.net_to_users_minor }}</td>
+              <td>{{ snapshot.alert|default:"—" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -23,7 +23,6 @@ from django.views.decorators.http import require_POST
 
 from compliance.services import current_tier
 from core.exceptions import BiglieError
-from core.money import Asset
 from payments.constants import AUTO_APPROVE_MAX_MINOR, PaymentState, ProviderKey
 from payments.forms import DepositForm, WithdrawalForm
 from payments.models import Deposit, Withdrawal
@@ -227,8 +226,3 @@ def history(request):
 # reviewer can reject a withdrawal for a compliance reason; the product may not
 # ask the user to reconsider. See `payments.services.confirm_withdrawal`.
 # ---------------------------------------------------------------------------
-
-
-def asset_label(asset: str) -> str:
-    """Small helper the templates use to name an asset in Italian."""
-    return Asset(asset).label

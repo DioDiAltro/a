@@ -14,9 +14,9 @@ from __future__ import annotations
 import uuid
 
 from core.money import Amount, Asset
-from wallet.constants import AccountKind
+from wallet.constants import AccountKind, HoldState
 from wallet.ledger import system_account
-from wallet.models import PendingCredit
+from wallet.models import Hold, PendingCredit
 
 
 def claimable_credits(user, *, limit: int = 50) -> list[PendingCredit]:
@@ -35,6 +35,32 @@ def get_claimable_credit(user, credit_id: uuid.UUID) -> PendingCredit | None:
     there is no path where a caller forgets the ownership test.
     """
     return PendingCredit.objects.filter(pk=credit_id, user=user).first()
+
+
+def get_hold(hold_id: uuid.UUID, *, user=None) -> Hold | None:
+    """Look a hold up by id, optionally scoped to its owner.
+
+    This exists because a hold is routinely placed by one request and resolved
+    by another — a withdrawal reserves funds when it is requested and releases
+    them when a reviewer approves it, hours later and from a different session.
+    Without a by-id read, the calling context has to reach into `wallet.models`,
+    which is exactly the coupling the boundary test forbids.
+
+    Pass `user` whenever the caller is acting on behalf of somebody: it scopes
+    the lookup in the query rather than leaving an ownership check for the call
+    site to remember.
+    """
+    queryset = Hold.objects.filter(pk=hold_id)
+    if user is not None:
+        queryset = queryset.filter(user=user)
+    return queryset.first()
+
+
+def active_holds(user) -> list[Hold]:
+    """The user's live reservations — money committed but not yet spent."""
+    return list(
+        Hold.objects.filter(user=user, state=HoldState.ACTIVE).order_by("created_at")
+    )
 
 
 def charity_pool_balances() -> dict[Asset, Amount]:

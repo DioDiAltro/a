@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Sfide tra venditori · biglie{% endblock %}
+
+{% block content %}
+<div class="stack-lg" style="max-width:48rem">
+
+  <header class="stack">
+    <h1>Sfide</h1>
+    <p class="muted" style="margin:0">
+      Due venditori mettono la stessa posta, un tiro decide. Chi vince prende il
+      piatto meno il {{ rake_percent }}% di rake. La posta resta bloccata finché
+      l'altro non risponde, e torna intera se rifiuta o se scade.
+    </p>
+  </header>
+
+  {% if open_duels %}
+    <section class="stack">
+      <h2>Aperte</h2>
+      {% for duel in open_duels %}
+        <article class="card row-between wrap">
+          <div>
+            <p style="margin:0">
+              {% if duel.challenger_id == user.pk %}
+                Hai sfidato <strong>{{ duel.defender.handle }}</strong>
+              {% else %}
+                <strong>{{ duel.challenger.handle }}</strong> ti ha sfidato
+              {% endif %}
+              per <span class="pot">{{ duel.stake }}</span>
+            </p>
+            {% if duel.message %}<p class="tiny muted" style="margin:0">«{{ duel.message }}»</p>{% endif %}
+            <p class="tiny muted" style="margin:0">
+              scade <span data-countdown="{{ duel.expires_at|date:'c' }}">{{ duel.expires_at|date:"d/m H:i" }}</span>
+            </p>
+          </div>
+
+          <div class="row wrap">
+            {% if duel.defender_id == user.pk %}
+              <form method="post" action="{% url 'games:duel_accept' duel.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--risk">Accetta</button>
+              </form>
+              <form method="post" action="{% url 'games:duel_decline' duel.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--safe">Rifiuta</button>
+              </form>
+            {% else %}
+              <a class="btn btn--ghost" href="{% url 'games:duel_detail' duel.pk %}">Dettagli</a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </section>
+  {% endif %}
+
+  <section class="card stack">
+    <h2>Lancia una sfida</h2>
+    <form method="post" action="{% url 'games:duel_challenge' %}" class="stack">
+      {% csrf_token %}
+      {{ form.nonce }}
+      {% for field in form.visible_fields %}
+        <div class="field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+          {{ field.errors }}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn--risk">Sfida</button>
+    </form>
+
+    <p class="tiny muted" style="margin:0">
+      Puoi sfidare la stessa persona al massimo tre volte al giorno, e solo
+      entro il limite di posta del tuo livello. Chi non vuole essere sfidato
+      disattiva le sfide dal proprio profilo: quella scelta viene rispettata.
+    </p>
+  </section>
+
+  {% if resolved %}
+    <section class="stack">
+      <h2>Concluse</h2>
+      {% for duel in resolved %}
+        <article class="card row-between wrap">
+          <span>
+            {{ duel.challenger.handle }} vs {{ duel.defender.handle }} ·
+            <span class="pot">{{ duel.pot }}</span>
+          </span>
+          {% if duel.winner_id == user.pk %}
+            <span class="chip chip--win">vinta</span>
+          {% else %}
+            <span class="chip chip--loss">persa</span>
+          {% endif %}
+          <a href="{% url 'games:duel_detail' duel.pk %}">dettagli</a>
+        </article>
+      {% endfor %}
+    </section>
+  {% endif %}
+
+</div>
+{% endblock %}

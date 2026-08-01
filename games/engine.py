@@ -279,6 +279,15 @@ class GameDefinition:
         total = sum(s.weight for s in self.table)
         return Fraction(sum(s.weight for s in self.table if s.is_win), total)
 
+    @property
+    def rtp_percent(self) -> float:
+        """The declared RTP as a percentage, for the label on the game card."""
+        return round(self.rtp_bp / 100, 2)
+
+    @property
+    def hit_rate_percent(self) -> float:
+        return round(float(self.hit_rate) * 100, 2)
+
     def paytable(self) -> list[dict[str, Any]]:
         """The table, rendered for the page that shows the player their odds."""
         total = sum(s.weight for s in self.table)
@@ -516,6 +525,10 @@ class Ladder(GameDefinition):
     name = "Scala"
     tagline = "Sali finché hai coraggio. Ogni gradino vale di più e regge di meno."
     multi_step = True
+
+    #: The rungs, exposed on the instance so `services` never has to import the
+    #: module-level tuple to ask how tall the ladder is.
+    rungs: tuple[int, ...] = LADDER_RUNGS
 
     # -- odds ---------------------------------------------------------------
 

@@ -271,3 +271,40 @@ def test_a_real_money_movement_lands_in_the_journal(db, user, django_capture_on_
     )
     assert recorded.count() == 1
     assert AuditEvent.verify_chain() == []
+
+
+def test_withdrawing_does_not_eat_the_deposit_limit(db, user):
+    """Tracking a withdrawal must not consume the user's deposit ceiling.
+
+    An earlier version counted withdrawals as DEPOSIT usage so the cumulative
+    KYC threshold could find them. The side effect was that taking €500 out
+    silently burned €500 of the amount you were allowed to put in — a limit the
+    user set for one purpose, spent by an unrelated action.
+    """
+    set_limit(user, LimitKind.DEPOSIT, LimitPeriod.DAY, biglie("100").minor)
+    record_usage(user, LimitKind.WITHDRAWAL, biglie("90"), reference="withdrawal:1")
+
+    # The deposit ceiling is untouched.
+    check_limit(user, LimitKind.DEPOSIT, biglie("100"))
+
+
+def test_withdrawals_still_feed_the_cumulative_kyc_threshold(db, user):
+    """The reason the tracking exists in the first place."""
+    from compliance.services import cumulative_withdrawn_minor
+
+    approve_kyc(user, KycTier.BASIC)
+    assert cumulative_withdrawn_minor(user) == 0
+
+    big = Amount(FULL_KYC_CUMULATIVE_THRESHOLD_MINOR - 100, PIENA)
+    record_usage(user, LimitKind.WITHDRAWAL, big, reference="withdrawal:1")
+
+    assert cumulative_withdrawn_minor(user) == big.minor
+    # BASIC was enough before; crossing the threshold now demands FULL.
+    with pytest.raises(KycRequired):
+        require_kyc_for_withdrawal(user, biglie("500"))
+
+
+def test_a_withdrawal_limit_cannot_be_enforced(db, user):
+    """Capping withdrawals would trap people, so `check_limit` refuses the kind."""
+    with pytest.raises(ValueError):
+        check_limit(user, LimitKind.WITHDRAWAL, biglie("10"))

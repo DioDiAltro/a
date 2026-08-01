@@ -187,6 +187,11 @@ class SaleMode(abc.ABC):
     #: buy slot: no).
     allows_repeat_participation: ClassVar[bool] = True
 
+    #: The outcome is drawn rather than determined. Such a sale commits to a
+    #: seed before it knows its entries, so the winner can be re-derived by
+    #: anybody afterwards.
+    draws_outcome: ClassVar[bool] = False
+
     # -- configuration ------------------------------------------------------
 
     @abc.abstractmethod
@@ -221,6 +226,17 @@ class SaleMode(abc.ABC):
         per person — and calls `salemodes.holds` to reserve the money. It must
         not write to the ledger any other way.
         """
+
+    def can_announce_settlement(self, sale) -> Decision:
+        """May the seller *announce* an early settlement right now?
+
+        Separate from `can_settle_early` on purpose. Announcing is what starts
+        the notice window, so a mode whose early settlement requires a notice
+        window would otherwise refuse the very announcement that satisfies it.
+        Modes that need no window leave this refusing and let the seller call
+        settlement directly.
+        """
+        return Decision.no("Questa vendita non prevede un annuncio di chiusura.")
 
     def can_settle_early(self, sale) -> Decision:
         """May this sale be closed before its deadline, right now?"""

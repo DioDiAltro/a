@@ -51,6 +51,7 @@ from payments.constants import (
 )
 from payments.models import Deposit, Withdrawal
 from payments.providers import get_provider
+from wallet.selectors import get_hold
 from wallet.services import (
     burn_for_withdrawal,
     issue_for_deposit,
@@ -453,9 +454,12 @@ def approve_withdrawal(
     # Feeds `compliance.services.cumulative_withdrawn_minor`, which is what
     # decides when BASIC verification stops being enough. The "withdrawal:"
     # prefix is the marker compliance looks for.
+    # WITHDRAWAL, not DEPOSIT: this feeds the cumulative KYC threshold and must
+    # not eat into the user's deposit ceiling. Taking your own money out is not
+    # a thing the platform caps.
     record_usage(
         withdrawal.user,
-        LimitKind.DEPOSIT,
+        LimitKind.WITHDRAWAL,
         withdrawal.euro,
         reference=f"withdrawal:{withdrawal.id}",
     )
@@ -528,17 +532,11 @@ def reverse_withdrawal(withdrawal: Withdrawal, *, reason: str) -> Withdrawal:
 def _hold_for(withdrawal: Withdrawal):
     """Re-read the wallet hold this withdrawal reserved.
 
-    A gap in the wallet's published API: `release_hold(hold)` takes an object,
-    but neither `wallet.services` nor `wallet.selectors` offers a way to look a
-    hold up by id, and a withdrawal awaiting review is released by a different
-    request than the one that placed it. Until `wallet.selectors.get_hold(id)`
-    (or a `release_hold_by_id`) exists, we go through the name the wallet's own
-    service module publishes. Kept in one function so there is exactly one line
-    to change when it does.
+    A withdrawal is held when it is requested and released when a reviewer acts
+    on it — a different request, often hours later — so the hold has to be
+    fetched by id rather than carried in memory.
     """
-    from wallet.services import Hold
-
-    return Hold.objects.get(pk=withdrawal.hold_id)
+    return get_hold(withdrawal.hold_id)
 
 
 # ---------------------------------------------------------------------------

@@ -158,6 +158,13 @@ class DuelQuerySet(models.QuerySet):
             Q(challenger=user) | Q(defender=user), state=DuelState.PENDING
         ).order_by("expires_at")
 
+    def resolved_for(self, user):
+        return (
+            self.filter(Q(challenger=user) | Q(defender=user), state=DuelState.RESOLVED)
+            .select_related("challenger", "defender", "winner", "round")
+            .order_by("-resolved_at")
+        )
+
     def stale(self):
         """Pending duels past their deadline. The sweeper's input."""
         return self.filter(state=DuelState.PENDING, expires_at__lte=timezone.now())
@@ -204,6 +211,16 @@ class Duel(BaseModel):
     )
     round = models.OneToOneField(
         GameRound, null=True, blank=True, on_delete=models.PROTECT, related_name="duel"
+    )
+
+    #: Committed when the challenge is sent, so the hash is published before the
+    #: defender has said anything — and bound to *their* client seed when they
+    #: accept. Neither seat can steer the result: the challenger does not know
+    #: the seed the defender will pick, and the defender cannot see a server
+    #: seed that was committed before they were asked.
+    proof = models.ForeignKey(
+        "games.FairnessProof", null=True, blank=True,
+        on_delete=models.PROTECT, related_name="duels",
     )
 
     #: Wallet hold ids. UUIDs, not FKs — see the module docstring.

@@ -1,0 +1,28 @@
+{# Challenge. The two numbers that matter are the discounted price and the odds,
+   and the sentence that matters is "se perdi non paghi nulla". #}
+<section class="card stack" aria-label="Sfida il venditore">
+  <p class="card__label">{{ mode.label }}</p>
+
+  <p class="pot" style="font-size:2rem">
+    {{ progress.discounted_price }}
+    <span class="muted" style="font-size:1rem"><s>{{ progress.full_price }}</s></span>
+  </p>
+
+  <p class="tiny muted">
+    Minigioco: {{ progress.game_key }} · probabilità di vincere
+    <span class="num">{{ progress.buyer_odds_percent }}%</span> ·
+    {{ progress.attempts }} tentativ{{ progress.attempts|pluralize:"o,i" }} finora.
+  </p>
+  <p class="tiny muted">
+    Se perdi non paghi nulla: l'importo bloccato torna intero e subito.
+    L'esito è verificabile con l'impegno pubblicato all'apertura.
+  </p>
+
+  {% if is_open and not is_seller and user.is_authenticated %}
+    <form method="post" action="{{ action_url }}">
+      {% csrf_token %}
+      <input type="hidden" name="amount_minor" value="{{ progress.discounted_price.minor }}">
+      <button class="btn btn--primary" type="submit">Sfida il venditore</button>
+    </form>
+  {% endif %}
+</section>
