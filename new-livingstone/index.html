@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>New Livingstone Pub · Mo.Ma. Club · Troia</title>
+<meta name="description" content="Pub in stile scozzese nel centro storico di Troia (FG): carne alla brace, birre alla spina, il Super Panino alla Zozzona con colata di cheddar, serate a tema e musica. Via Vittorio Aquilino 6.">
+<meta name="theme-color" content="#0D1712">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/ultra.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/libre-franklin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+
+<!-- Simboli riusati: ornamenti vittoriani, cardo, icone d'interfaccia (stile Lucide, tratto 2 su 24) -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="orn-angolo" viewBox="0 0 64 64">
+    <g fill="none" stroke="currentColor" stroke-linecap="round">
+      <path d="M4 62V16C4 9 9 4 16 4h46" stroke-width="2"/>
+      <path d="M10 62V22c0-7 5-12 12-12h40" stroke-width="1"/>
+      <path d="M17 17c10-2 15 6 10 11-4 4-10 0-7-4 2-3 6-1 5 1" stroke-width="1.6"/>
+      <path d="M30 10c4 6 12 7 18 2M10 30c6 4 7 12 2 18" stroke-width="1.4"/>
+    </g>
+    <circle cx="4" cy="4" r="3" fill="currentColor"/>
+    <circle cx="48" cy="12" r="1.6" fill="currentColor"/>
+    <circle cx="12" cy="48" r="1.6" fill="currentColor"/>
+  </symbol>
+  <symbol id="cardo" viewBox="0 0 48 64">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 22 14 5M24 22l-4-19M24 22V2M24 22l4-19M24 22 34 5M24 22 9 11M24 22l15-11"/>
+      <path d="M14 23h20c0 10-4 17-10 17s-10-7-10-17Z"/>
+      <path d="m16 27 14 9M32 27l-14 9M19 24l10 15M29 24 19 39"/>
+      <path d="M24 40v22"/>
+      <path d="M24 52c-5-1-9 2-15-3l4-1-3-4 5 2 1-5 4 5c2 1 3 3 4 6M24 56c5-1 9 2 15-3l-4-1 3-4-5 2-1-5-4 5c-2 1-3 3-4 6"/>
+    </g>
+  </symbol>
+  <symbol id="stella" viewBox="0 0 24 24">
+    <path fill="currentColor" d="m12 2 2.9 6.9 7.1.4-5.5 4.8 1.7 6.9L12 17.3 5.8 21l1.7-6.9L2 9.3l7.1-.4z"/>
+  </symbol>
+  <symbol id="i-telefono" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-orologio" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></g></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></g></symbol>
+  <symbol id="i-messaggio" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+  <symbol id="i-freccia" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 7h10v10M7 17 17 7"/></symbol>
+</svg>
+
+<a class="salta" href="#contenuto">Vai al contenuto</a>
+
+<header class="testata legno">
+  <div class="testata__dentro">
+    <a class="marchio" href="#top" aria-label="New Livingstone Pub, torna all'inizio">
+      <svg class="marchio__cardo" aria-hidden="true"><use href="#cardo"/></svg>
+      <span class="marchio__testo">
+        <span class="marchio__nome">New Livingstone</span>
+        <span class="marchio__sotto">Pub · Mo.Ma. Club</span>
+      </span>
+    </a>
+    <nav class="menu" aria-label="Sezioni">
+      <ul>
+        <li><a href="#il-pub">Il pub</a></li>
+        <li><a href="#zozzona">Zozzona</a></li>
+        <li><a href="#brace">Brace</a></li>
+        <li><a href="#bancone">Bancone</a></li>
+        <li><a href="#serate">Serate</a></li>
+        <li><a href="#dove">Dove</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn--colata btn--piccolo" href="#prenota"><span>Prenota</span></a>
+  </div>
+  <div class="nastro-tartan" aria-hidden="true"></div>
+</header>
+
+<main id="contenuto">
+
+  <!-- ============ HERO ============ -->
+  <section class="banda hero tessuto-tartan" id="top" aria-labelledby="titolo-hero">
+    <div class="banda__dentro hero__griglia">
+
+      <div class="specchio">
+        <svg class="specchio__angolo specchio__angolo--a" aria-hidden="true"><use href="#orn-angolo"/></svg>
+        <svg class="specchio__angolo specchio__angolo--b" aria-hidden="true"><use href="#orn-angolo"/></svg>
+        <svg class="specchio__angolo specchio__angolo--c" aria-hidden="true"><use href="#orn-angolo"/></svg>
+        <svg class="specchio__angolo specchio__angolo--d" aria-hidden="true"><use href="#orn-angolo"/></svg>
+
+        <!-- Insegna appesa: braccio in ferro battuto, tavola in legno che oscilla una volta -->
+        <svg class="insegna" viewBox="0 0 180 150" aria-hidden="true">
+          <g class="ferro" fill="none" stroke-linecap="round">
+            <rect x="0" y="0" width="8" height="74" rx="2" class="ferro-pieno"/>
+            <path d="M4 10h168" stroke-width="5"/>
+            <path d="M6 66C34 40 66 20 100 12" stroke-width="3"/>
+            <path d="M44 33c-11-3-14 9-6 11 5 1 7-5 3-7M70 20c-8-8-17 0-11 5 4 3 8-1 5-4" stroke-width="2"/>
+            <circle cx="172" cy="10" r="4" class="ferro-pieno"/>
+          </g>
+          <g class="insegna__tavola">
+            <path d="M40 12v26M140 12v26" class="catena" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3 4"/>
+            <rect x="22" y="38" width="136" height="100" rx="8" class="tavola"/>
+            <rect x="29" y="45" width="122" height="86" rx="5" class="tavola-filetto" fill="none" stroke-width="2"/>
+            <rect x="34" y="50" width="112" height="76" rx="3" class="tavola-filetto" fill="none" stroke-width=".8"/>
+            <use href="#cardo" x="72" y="56" width="36" height="48" class="tavola-cardo"/>
+            <text x="52" y="94" class="tavola-lettera">N</text>
+            <text x="128" y="94" class="tavola-lettera">L</text>
+            <text x="90" y="121" class="tavola-pub">PUB</text>
+          </g>
+        </svg>
+
+        <p class="occhiello">Pub scozzese · Braceria · Birre alla spina</p>
+        <h1 class="hero__titolo" id="titolo-hero">
+          <span class="hero__new">New</span>
+          <span class="hero__nome">Livingstone</span>
+        </h1>
+        <p class="nastro"><span>Pub · Mo.Ma. Club</span></p>
+        <p class="hero__testo">
+          Il pub in stile scozzese nel centro storico di Troia. Carne alla brace,
+          birra alla spina, musica e il <strong>Super Panino alla Zozzona</strong>,
+          quello con la colata di cheddar.
+        </p>
+        <div class="hero__azioni">
+          <a class="btn btn--colata" href="#prenota"><span>Prenota un tavolo</span></a>
+          <a class="btn btn--filetto" href="#zozzona">Guarda il menu</a>
+        </div>
+        <ul class="hero__info">
+          <li>
+            <svg class="icona" aria-hidden="true"><use href="#i-orologio"/></svg>
+            <span class="stato" data-stato>Dalle 19:00, lunedì chiuso</span>
+          </li>
+          <li>
+            <svg class="icona" aria-hidden="true"><use href="#i-pin"/></svg>
+            <span>Via Vittorio Aquilino 6, Troia</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Illustrazione protagonista: il Super Panino alla Zozzona e una pinta nonic, con la colata -->
+      <figure class="hero__figura">
+        <svg class="panino" viewBox="0 0 480 420" role="img" aria-labelledby="panino-titolo">
+          <title id="panino-titolo">Il Super Panino alla Zozzona: doppia carne, doppio cheddar che cola fino al tagliere, accanto a una pinta con la schiuma che trabocca</title>
+          <defs>
+            <pattern id="tartan-bandierina" width="12" height="12" patternUnits="userSpaceOnUse">
+              <rect width="12" height="12" class="t-verde"/>
+              <rect y="3" width="12" height="5" class="t-blu"/>
+              <rect x="3" width="5" height="12" class="t-blu t-trasp"/>
+              <rect y="10" width="12" height="1" class="t-rosso"/>
+              <rect x="10" width="1" height="12" class="t-rosso"/>
+            </pattern>
+            <radialGradient id="bagliore-hero" cx=".5" cy=".55" r=".5">
+              <stop offset="0" class="stop-bagliore"/>
+              <stop offset="1" class="stop-bagliore stop-bagliore--fine"/>
+            </radialGradient>
+            <mask id="colata-hero" maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="420">
+              <rect class="colata-tenda" x="0" y="0" width="480" height="420" fill="#fff"/>
+            </mask>
+          </defs>
+
+          <!-- cornice dorata ovale, come gli specchi da birreria -->
+          <ellipse cx="240" cy="226" rx="214" ry="186" fill="url(#bagliore-hero)"/>
+          <g class="raggiera" fill="none">
+            <ellipse cx="240" cy="226" rx="214" ry="186" stroke-width="2.5"/>
+            <ellipse cx="240" cy="226" rx="204" ry="176" stroke-width="1"/>
+            <ellipse cx="240" cy="226" rx="194" ry="166" stroke-width="10" stroke-dasharray="1.5 9" class="raggiera__perle"/>
+          </g>
+
+          <!-- vapore -->
+          <g class="vapore" fill="none" stroke-width="3" stroke-linecap="round">
+            <path class="vapore__filo" style="--i:0" d="M150 160c-9-10 8-18 0-30s8-18 0-28"/>
+            <path class="vapore__filo" style="--i:1" d="M262 160c-9-10 8-18 0-30s8-18 0-28"/>
+          </g>
+
+          <!-- tagliere -->
+          <rect x="34" y="350" width="412" height="34" rx="17" class="legno-scuro"/>
+          <rect x="34" y="344" width="412" height="30" rx="15" class="legno-chiaro"/>
+          <path d="M60 356h120M210 362h150M90 366h60M300 352h110" class="venatura" fill="none" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="428" cy="359" r="5" class="legno-scuro"/>
+
+          <!-- pane sotto -->
+          <path class="crosta" d="M104 324h192c8 0 12 4 12 10v4c0 8-6 13-14 13H106c-8 0-14-5-14-13v-4c0-6 4-10 12-10Z"/>
+          <!-- carne 1 -->
+          <path class="carne" d="M92 308c0-8 8-10 16-10h184c8 0 16 2 16 10v12c0 8-8 11-18 10-20 3-40-1-60 2s-40-2-60 1-40-2-60 0c-12 0-18-4-18-12Z"/>
+          <path class="segni-griglia" d="M122 306l14 18M156 306l14 18M190 306l14 18M224 306l14 18M258 306l14 18" fill="none" stroke-width="3" stroke-linecap="round"/>
+          <!-- cheddar 1 -->
+          <path class="cheddar" d="M86 296h228l6 8-18 4-16-4-30 6-36-6-34 6-40-6-40 4-20-4Z"/>
+          <!-- carne 2 -->
+          <path class="carne" d="M92 272c0-8 8-10 16-10h184c8 0 16 2 16 10v12c0 8-8 11-18 10-20 3-40-1-60 2s-40-2-60 1-40-2-60 0c-12 0-18-4-18-12Z"/>
+          <path class="segni-griglia" d="M118 270l14 18M152 270l14 18M186 270l14 18M220 270l14 18M254 270l14 18" fill="none" stroke-width="3" stroke-linecap="round"/>
+          <!-- cheddar 2 -->
+          <path class="cheddar" d="M82 258h236l6 9-20 5-18-5-32 7-36-7-34 7-42-7-40 5-22-5Z"/>
+          <path class="cheddar-luce" d="M110 262h70M220 262h50" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- la colata: tutte le gocce sotto un'unica maschera che scende -->
+          <g mask="url(#colata-hero)" class="cheddar">
+            <path d="M98 268h13v14a6.5 6.5 0 0 1-13 0Z"/>
+            <path d="M146 270h14v34a7 7 0 0 1-14 0Z"/>
+            <path d="M210 270h12v12a6 6 0 0 1-12 0Z"/>
+            <path d="M258 270h15v60a7.5 7.5 0 0 1-15 0Z"/>
+            <path d="M310 266h11v84a5.5 5.5 0 0 1-11 0Z"/>
+            <path d="M112 304h12v16a6 6 0 0 1-12 0Z"/>
+            <path d="M190 306h11v22a5.5 5.5 0 0 1-11 0Z"/>
+            <path d="M286 304h12v12a6 6 0 0 1-12 0Z"/>
+            <ellipse cx="316" cy="352" rx="22" ry="5"/>
+          </g>
+
+          <!-- pane sopra, con sesamo -->
+          <path class="crosta" d="M96 252c0-56 44-92 104-92s104 36 104 92c0 6-4 10-10 10H106c-6 0-10-4-10-10Z"/>
+          <path class="crosta-luce" d="M126 216c12-26 38-40 70-42" fill="none" stroke-width="7" stroke-linecap="round"/>
+          <g class="sesamo">
+            <ellipse cx="160" cy="200" rx="5" ry="2.4" transform="rotate(-24 160 200)"/>
+            <ellipse cx="196" cy="186" rx="5" ry="2.4" transform="rotate(8 196 186)"/>
+            <ellipse cx="236" cy="194" rx="5" ry="2.4" transform="rotate(28 236 194)"/>
+            <ellipse cx="140" cy="230" rx="5" ry="2.4" transform="rotate(-40 140 230)"/>
+            <ellipse cx="270" cy="220" rx="5" ry="2.4" transform="rotate(40 270 220)"/>
+            <ellipse cx="214" cy="222" rx="5" ry="2.4" transform="rotate(-10 214 222)"/>
+            <ellipse cx="176" cy="234" rx="5" ry="2.4" transform="rotate(16 176 234)"/>
+            <ellipse cx="248" cy="238" rx="5" ry="2.4" transform="rotate(-30 248 238)"/>
+          </g>
+
+          <!-- stecchino con bandierina tartan -->
+          <path d="M200 108v68" class="stecchino" fill="none" stroke-width="3" stroke-linecap="round"/>
+          <path d="M201 108c12-4 22 4 36 0v24c-14 4-24-4-36 0Z" fill="url(#tartan-bandierina)" class="bandierina"/>
+
+          <!-- pinta nonic -->
+          <path class="birra" d="M344 200h96l-7 10-8 137h-66l-8-137Z"/>
+          <path class="birra-luce" d="M366 214l4 120" fill="none" stroke-width="6" stroke-linecap="round"/>
+          <g class="bollicine">
+            <circle cx="392" cy="320" r="2.2"/><circle cx="404" cy="284" r="1.8"/><circle cx="386" cy="250" r="2"/><circle cx="410" cy="232" r="1.5"/>
+          </g>
+          <path class="schiuma" d="M346 204c-4-18 6-32 20-32 4-10 18-14 28-8 10-8 28-4 32 8 10 0 18 12 12 32Z"/>
+          <path class="vetro" d="M344 176h96l4 22-10 12-8 140h-68l-8-140-10-12Z" fill="none" stroke-width="3" stroke-linejoin="round"/>
+          <!-- schiuma che trabocca lungo il bicchiere: stessa maschera della colata -->
+          <g mask="url(#colata-hero)">
+            <path class="schiuma" d="M360 198h14v36a7 7 0 0 1-14 0ZM410 200h10v18a5 5 0 0 1-10 0Z"/>
+          </g>
+        </svg>
+        <figcaption class="didascalia">Il Super Panino alla Zozzona. Si mangia con le mani.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="divisorio-colata" aria-hidden="true" data-anim></div>
+
+  <!-- ============ IL PUB ============ -->
+  <section class="banda il-pub" id="il-pub" aria-labelledby="titolo-pub">
+    <div class="banda__dentro il-pub__griglia">
+      <div class="il-pub__testo">
+        <p class="occhiello">Il nome</p>
+        <h2 class="titolo-sezione" id="titolo-pub">«Il dottor Livingstone, suppongo?»</h2>
+        <div class="ornamento" aria-hidden="true"><span></span><svg><use href="#cardo"/></svg><span></span></div>
+        <p>
+          Lo chiese il giornalista Henry Morton Stanley nel 1871, sulle rive del lago
+          Tanganica, quando dopo mesi di ricerche trovò David Livingstone, l'esploratore
+          scozzese nato a Blantyre nel 1813.
+        </p>
+        <p>
+          Trovare noi è molto più semplice. Siamo in via Vittorio Aquilino 6, nel centro
+          storico di Troia, vicino alla Villa Comunale. Dentro c'è un pub in stile scozzese:
+          birra alla spina, carne sulla brace, musica e serate a tema. Si apre alle 19:00.
+        </p>
+      </div>
+
+      <figure class="bussola" data-anim>
+        <svg viewBox="0 0 220 220" role="img" aria-labelledby="bussola-titolo">
+          <title id="bussola-titolo">Bussola da esploratore con l'ago che punta verso il pub</title>
+          <circle cx="110" cy="110" r="106" class="bussola__fondo"/>
+          <g fill="none" class="bussola__oro">
+            <circle cx="110" cy="110" r="104" stroke-width="2.5"/>
+            <circle cx="110" cy="110" r="99" stroke-width="7" stroke-dasharray="1 7.64"/>
+            <circle cx="110" cy="110" r="92" stroke-width="1"/>
+            <circle cx="110" cy="110" r="64" stroke-width="1"/>
+          </g>
+          <g class="rosa">
+            <g id="rosa-punta">
+              <path d="M110 110V30l9 70Z" class="rosa__scura"/>
+              <path d="M110 110V30l-9 70Z" class="rosa__chiara"/>
+            </g>
+            <use href="#rosa-punta" transform="rotate(90 110 110)"/>
+            <use href="#rosa-punta" transform="rotate(180 110 110)"/>
+            <use href="#rosa-punta" transform="rotate(270 110 110)"/>
+            <g transform="rotate(45 110 110)">
+              <path d="M110 110V58l6 46Z" class="rosa__scura"/>
+              <path d="M110 110V58l-6 46Z" class="rosa__chiara"/>
+            </g>
+            <g transform="rotate(135 110 110)">
+              <path d="M110 110V58l6 46Z" class="rosa__scura"/>
+              <path d="M110 110V58l-6 46Z" class="rosa__chiara"/>
+            </g>
+            <g transform="rotate(225 110 110)">
+              <path d="M110 110V58l6 46Z" class="rosa__scura"/>
+              <path d="M110 110V58l-6 46Z" class="rosa__chiara"/>
+            </g>
+            <g transform="rotate(315 110 110)">
+              <path d="M110 110V58l6 46Z" class="rosa__scura"/>
+              <path d="M110 110V58l-6 46Z" class="rosa__chiara"/>
+            </g>
+          </g>
+          <g class="bussola__lettere">
+            <text x="110" y="24">N</text>
+            <text x="200" y="115">E</text>
+            <text x="110" y="206">S</text>
+            <text x="20" y="115">O</text>
+          </g>
+          <g class="ago">
+            <path d="M110 44l7 66h-14Z" class="ago__nord"/>
+            <path d="M110 176l7-66h-14Z" class="ago__sud"/>
+            <circle cx="110" cy="110" r="7" class="ago__perno"/>
+            <circle cx="110" cy="110" r="2.5" class="ago__vite"/>
+          </g>
+        </svg>
+        <figcaption class="didascalia">Direzione: via Aquilino 6.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ LA ZOZZONA: lavagna ============ -->
+  <section class="banda zozzona legno" id="zozzona" aria-labelledby="titolo-zozzona">
+    <div class="banda__dentro">
+      <div class="cornice-lavagna">
+        <div class="lavagna" data-anim>
+          <div class="lavagna__testo">
+            <p class="gesso-occhiello">La specialità della casa</p>
+            <h2 class="gesso-titolo" id="titolo-zozzona">Il Super Panino<br>alla Zozzona</h2>
+            <p class="gesso-sotto">con colata di cheddar</p>
+            <p class="gesso-corpo">
+              Il panino più zozzo del centro storico. Carne alla brace, pane caldo e
+              tanto cheddar fuso che scende lungo i lati e arriva fino al tagliere.
+            </p>
+            <p class="gesso-nota">Tovaglioli: prendine tanti.</p>
+          </div>
+          <svg class="lavagna__disegno" viewBox="-78 0 448 300" role="img" aria-labelledby="gesso-titolo-svg">
+            <title id="gesso-titolo-svg">Disegno a gesso del panino con le frecce: pane caldo, carne alla brace, colata di cheddar</title>
+            <g class="gesso-tratto" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M80 150c0-46 36-74 84-74s84 28 84 74Z" stroke-width="3"/>
+              <path d="M110 112c8-14 22-22 40-24" stroke-width="2"/>
+              <path d="M74 160h180M76 176c20 4 160 4 176 0M74 194h180M76 210c20 4 160 4 176 0" stroke-width="2.5"/>
+              <path d="M84 226h162c6 0 8 4 8 8 0 8-6 12-12 12H88c-6 0-12-4-12-12 0-4 2-8 8-8Z" stroke-width="3"/>
+              <path d="M40 262h290" stroke-width="2"/>
+              <path d="M138 104l3 2M168 96l3 1M196 104l3 2M152 126l3 2M186 122l3 2M214 120l3 2" stroke-width="3"/>
+            </g>
+            <g class="gesso-cheddar">
+              <path d="M70 152h190l4 6-14 4-14-4-26 6-30-6-28 6-34-6-30 4-18-4Z"/>
+              <path d="M70 196h190l4 6-14 4-14-4-26 6-30-6-28 6-34-6-30 4-18-4Z"/>
+            </g>
+            <defs>
+              <mask id="colata-gesso" maskUnits="userSpaceOnUse" x="0" y="0" width="360" height="300">
+                <rect class="tenda-gesso" width="360" height="300" fill="#fff"/>
+              </mask>
+            </defs>
+            <g class="gesso-cheddar" mask="url(#colata-gesso)">
+              <path d="M86 160h10v14a5 5 0 0 1-10 0Z"/>
+              <path d="M134 162h11v30a5.5 5.5 0 0 1-11 0Z"/>
+              <path d="M212 162h12v42a6 6 0 0 1-12 0Z"/>
+              <path d="M254 158h9v100a4.5 4.5 0 0 1-9 0Z"/>
+              <path d="M160 204h10v20a5 5 0 0 1-10 0Z"/>
+              <ellipse cx="258" cy="262" rx="16" ry="4"/>
+            </g>
+            <g class="gesso-tratto gesso-frecce" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M300 84c-16-10-34-8-46 4M262 82l-8 6 9 4"/>
+              <path d="M26 180c16-6 30-6 44-2M61 172l9 6-9 6"/>
+              <path d="M300 246c0 10-10 16-24 16M284 255l-8 7 9 4"/>
+            </g>
+            <g class="gesso-scritte">
+              <text x="262" y="70">pane caldo</text>
+              <text x="-74" y="172">carne</text>
+              <text x="-74" y="194">alla brace</text>
+              <text x="272" y="218">cheddar,</text>
+              <text x="272" y="238">tanto</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DALLA BRACE ============ -->
+  <section class="banda brace" id="brace" aria-labelledby="titolo-brace" data-loop>
+    <svg class="brace__braci" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+      <g class="scintille scintille--a"><circle cx="120" cy="190" r="2.4"/><circle cx="520" cy="196" r="1.8"/><circle cx="940" cy="192" r="2.2"/></g>
+      <g class="scintille scintille--b"><circle cx="300" cy="196" r="1.8"/><circle cx="760" cy="190" r="2.4"/><circle cx="1110" cy="196" r="1.6"/></g>
+      <g class="scintille scintille--c"><circle cx="40" cy="194" r="1.6"/><circle cx="640" cy="198" r="2"/><circle cx="1020" cy="190" r="1.8"/></g>
+    </svg>
+    <div class="banda__dentro">
+      <header class="intestazione">
+        <p class="occhiello">Braceria</p>
+        <h2 class="titolo-sezione" id="titolo-brace">Dalla brace</h2>
+        <div class="ornamento" aria-hidden="true"><span></span><svg><use href="#cardo"/></svg><span></span></div>
+        <p class="intestazione__testo">Tagli importanti cotti sulla brace viva, da accompagnare con una birra artigianale.</p>
+      </header>
+
+      <ul class="tagli">
+        <li class="taglio">
+          <svg class="taglio__disegno" viewBox="0 0 160 100" aria-hidden="true">
+            <path class="carne-cruda" d="M18 52c0-28 30-40 62-38s64 12 64 38-32 38-64 36-62-10-62-36Z"/>
+            <path class="grasso" d="M24 34c14-16 36-22 58-20" fill="none" stroke-width="6" stroke-linecap="round"/>
+            <path class="osso" d="M66 18h28v7h-9v62h-10V25h-9Z"/>
+            <path class="marchi" d="M34 40l18 28M54 30l26 40M100 30l20 34M118 36l14 22" fill="none" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <h3>Fiorentina</h3>
+          <p>Il taglio con l'osso a T: filetto da una parte, controfiletto dall'altra. Alta, cotta sulla brace.</p>
+        </li>
+        <li class="taglio">
+          <svg class="taglio__disegno" viewBox="0 0 160 100" aria-hidden="true">
+            <path class="osso" d="M92 44h52c7 0 11 4 11 9s-4 9-11 9H92Z"/>
+            <circle class="osso" cx="150" cy="47" r="7"/><circle class="osso" cx="150" cy="59" r="7"/>
+            <path class="carne-cruda" d="M10 54c0-22 22-34 50-32s46 14 46 32-20 30-48 30S10 76 10 54Z"/>
+            <path class="grasso" d="M18 42c10-14 28-20 46-18" fill="none" stroke-width="6" stroke-linecap="round"/>
+            <path class="marchi" d="M26 44l16 26M46 36l20 34M68 34l18 30" fill="none" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <h3>Tomahawk</h3>
+          <p>La costata con l'osso lungo lasciato intero. Scenografica, succosa, da dividere al tavolo.</p>
+        </li>
+        <li class="taglio">
+          <svg class="taglio__disegno" viewBox="0 0 160 100" aria-hidden="true">
+            <path class="carne-cruda" d="M16 72c12-30 52-46 104-46 16 0 26 6 26 16 0 20-36 40-86 44-24 2-44-2-44-14Z"/>
+            <path class="grasso" d="M22 64c14-24 50-38 98-40 14 0 26 4 28 14-4-4-14-6-26-6-42 2-74 14-94 36Z"/>
+            <path class="marchi" d="M48 52l16 26M76 42l18 30M106 36l14 24" fill="none" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <h3>Picanha</h3>
+          <p>Il taglio brasiliano con il suo cappello di grasso, che sulla brace diventa croccante.</p>
+        </li>
+      </ul>
+
+      <div class="anche">
+        <svg class="anche__tagliere" viewBox="0 0 220 120" aria-hidden="true">
+          <path class="legno-chiaro" d="M20 60c0-24 20-36 70-36h80c14 0 22 8 22 18v36c0 10-8 18-22 18H90c-50 0-70-12-70-36Z"/>
+          <circle cx="188" cy="60" r="6" class="legno-scuro"/>
+          <path class="formaggio" d="M44 74l50-30 10 34Z"/>
+          <path class="formaggio-crosta" d="M94 44l10 34" fill="none" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="66" cy="68" r="3" class="formaggio-buco"/><circle cx="84" cy="66" r="2.2" class="formaggio-buco"/>
+          <g class="salame"><circle cx="124" cy="52" r="15"/><circle cx="146" cy="70" r="15"/><circle cx="118" cy="80" r="13"/></g>
+          <g class="salame-grasso"><circle cx="120" cy="48" r="1.8"/><circle cx="128" cy="56" r="1.5"/><circle cx="142" cy="66" r="1.8"/><circle cx="150" cy="74" r="1.4"/><circle cx="114" cy="78" r="1.6"/><circle cx="122" cy="84" r="1.4"/></g>
+        </svg>
+        <div class="anche__testo">
+          <h3>E poi</h3>
+          <p>Hamburger e panini all'americana, taglieri di salumi e formaggi per l'aperitivo, serate a tema in cucina.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AL BANCONE: spine e sottobicchieri ============ -->
+  <section class="banda bancone" id="bancone" aria-labelledby="titolo-bancone">
+    <div class="banda__dentro bancone__griglia">
+      <div class="bancone__testo">
+        <p class="occhiello">Al bancone</p>
+        <h2 class="titolo-sezione" id="titolo-bancone">Birra alla spina</h2>
+        <div class="ornamento" aria-hidden="true"><span></span><svg><use href="#cardo"/></svg><span></span></div>
+        <p>
+          Sul bancone trovi i sottobicchieri di Leffe, Birra Messina e Bulldog, e accanto
+          le birre artigianali che cambiano spesso. Chiedi al banco cosa c'è alla spina stasera.
+        </p>
+      </div>
+
+      <figure class="spine" data-anim>
+        <svg viewBox="0 0 360 300" role="img" aria-labelledby="spine-titolo">
+          <title id="spine-titolo">Quattro spine sul bancone e una pinta che si riempie fino a far traboccare la schiuma</title>
+          <defs>
+            <linearGradient id="ottone-barra" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" class="stop-oro-chiaro"/>
+              <stop offset=".5" class="stop-oro"/>
+              <stop offset="1" class="stop-oro-scuro"/>
+            </linearGradient>
+            <clipPath id="spine-bicchiere"><path d="M138 152h64l-6 96h-52Z"/></clipPath>
+          </defs>
+          <!-- maniglie con le targhette (pump clip) -->
+          <g class="maniglia">
+            <rect x="62" y="44" width="16" height="40" rx="5" class="manico"/>
+            <rect x="48" y="4" width="44" height="44" rx="8" class="targhetta targhetta--rosso"/>
+            <use href="#cardo" x="58" y="8" width="24" height="34" class="targhetta__segno"/>
+          </g>
+          <g class="maniglia">
+            <rect x="132" y="44" width="16" height="40" rx="5" class="manico"/>
+            <circle cx="140" cy="26" r="23" class="targhetta targhetta--blu"/>
+            <use href="#stella" x="126" y="12" width="28" height="28" class="targhetta__segno"/>
+          </g>
+          <g class="maniglia">
+            <rect x="202" y="44" width="16" height="40" rx="5" class="manico"/>
+            <path d="M210 2l24 14v24l-24 14-24-14V16Z" class="targhetta targhetta--verde"/>
+            <text x="210" y="35" class="targhetta__lettere">NL</text>
+          </g>
+          <g class="maniglia">
+            <rect x="272" y="44" width="16" height="40" rx="5" class="manico"/>
+            <rect x="256" y="6" width="48" height="40" rx="20" class="targhetta targhetta--cheddar"/>
+            <path d="M280 14c-6 6-6 16 0 24 6-8 6-18 0-24ZM272 22c4 2 6 6 8 10M288 22c-4 2-6 6-8 10" class="targhetta__luppolo" fill="none" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <!-- barra in ottone e becchi -->
+          <rect x="20" y="82" width="320" height="18" rx="9" fill="url(#ottone-barra)"/>
+          <g class="becco"><path d="M66 100h8v12c0 6 4 8 10 8v6c-12 0-18-6-18-14Z"/><path d="M136 100h8v12c0 6 4 8 10 8v6c-12 0-18-6-18-14Z"/><path d="M206 100h8v12c0 6 4 8 10 8v6c-12 0-18-6-18-14Z"/><path d="M276 100h8v12c0 6 4 8 10 8v6c-12 0-18-6-18-14Z"/></g>
+          <!-- getto -->
+          <path class="getto" d="M152 126v118" fill="none" stroke-width="4" stroke-linecap="round"/>
+          <!-- pinta che si riempie -->
+          <g clip-path="url(#spine-bicchiere)">
+            <rect class="livello" x="130" y="150" width="80" height="100"/>
+          </g>
+          <path class="schiuma spine__cappello" d="M136 154c0-10 8-14 16-12 4-8 16-8 22-2 8-4 22 0 24 8 6 2 8 6 6 10Z"/>
+          <path class="vetro" d="M134 140h72l3 16-7 10-7 82h-50l-7-82-7-10Z" fill="none" stroke-width="2.5" stroke-linejoin="round"/>
+          <path class="schiuma spine__goccia" d="M146 150h10v28a5 5 0 0 1-10 0ZM182 150h8v14a4 4 0 0 1-8 0Z"/>
+          <!-- vaschetta raccogligocce -->
+          <rect x="40" y="252" width="280" height="16" rx="4" class="vaschetta"/>
+          <path d="M56 260h248" class="vaschetta__griglia" fill="none" stroke-width="6" stroke-dasharray="10 6"/>
+          <rect x="20" y="268" width="320" height="12" rx="3" class="legno-chiaro"/>
+        </svg>
+      </figure>
+
+      <ul class="sottobicchieri" aria-label="Sottobicchieri sul bancone">
+        <li class="sottobicchiere" style="--r:-7deg">
+          <svg viewBox="0 0 200 200" role="img" aria-labelledby="sb-leffe">
+            <title id="sb-leffe">Sottobicchiere Leffe</title>
+            <defs><path id="giro-leffe" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0"/></defs>
+            <circle cx="100" cy="100" r="96" class="sb-fondo sb-fondo--rosso"/>
+            <circle cx="100" cy="100" r="90" class="sb-filo" fill="none" stroke-width="2"/>
+            <circle cx="100" cy="100" r="60" class="sb-filo" fill="none" stroke-width="1.5"/>
+            <text class="sb-giro"><textPath href="#giro-leffe" textLength="458" lengthAdjust="spacing">BIRRA D'ABBAZIA · DAL BELGIO · BIRRA D'ABBAZIA · DAL BELGIO ·</textPath></text>
+            <text x="100" y="112" class="sb-nome sb-nome--serif">Leffe</text>
+            <use href="#stella" x="92" y="122" width="16" height="16" class="sb-stella"/>
+          </svg>
+        </li>
+        <li class="sottobicchiere sottobicchiere--quadro" style="--r:5deg">
+          <svg viewBox="0 0 200 200" role="img" aria-labelledby="sb-messina">
+            <title id="sb-messina">Sottobicchiere Birra Messina</title>
+            <rect x="4" y="4" width="192" height="192" rx="26" class="sb-fondo sb-fondo--carta"/>
+            <rect x="14" y="14" width="172" height="172" rx="18" class="sb-filo-blu" fill="none" stroke-width="2"/>
+            <rect x="20" y="20" width="160" height="160" rx="14" class="sb-filo-blu" fill="none" stroke-width="1"/>
+            <text x="100" y="62" class="sb-piccolo sb-piccolo--blu">· SICILIA ·</text>
+            <text x="100" y="104" class="sb-nome sb-nome--blu">Birra</text>
+            <text x="100" y="140" class="sb-nome sb-nome--blu">Messina</text>
+            <path d="M60 158h80" class="sb-filo-blu" fill="none" stroke-width="2"/>
+          </svg>
+        </li>
+        <li class="sottobicchiere" style="--r:-3deg">
+          <svg viewBox="0 0 200 200" role="img" aria-labelledby="sb-bulldog">
+            <title id="sb-bulldog">Sottobicchiere Bulldog</title>
+            <defs><path id="giro-bulldog" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0"/></defs>
+            <circle cx="100" cy="100" r="96" class="sb-fondo sb-fondo--blu"/>
+            <circle cx="100" cy="100" r="92" class="sb-filo-cheddar" fill="none" stroke-width="3" stroke-dasharray="2 6"/>
+            <circle cx="100" cy="100" r="62" class="sb-filo-cheddar" fill="none" stroke-width="1.5"/>
+            <text class="sb-giro sb-giro--cheddar"><textPath href="#giro-bulldog" textLength="458" lengthAdjust="spacing">SUL BANCONE DEL NEW LIVINGSTONE · TROIA · SLÀINTE ·</textPath></text>
+            <text x="100" y="112" class="sb-nome sb-nome--cheddar">Bulldog</text>
+          </svg>
+        </li>
+        <li class="sottobicchiere sottobicchiere--casa" style="--r:8deg">
+          <svg viewBox="0 0 200 200" role="img" aria-labelledby="sb-casa">
+            <title id="sb-casa">Sottobicchiere del New Livingstone: Slàinte!</title>
+            <defs>
+              <pattern id="tartan-sottobicchiere" width="24" height="24" patternUnits="userSpaceOnUse">
+                <rect width="24" height="24" class="t-verde"/>
+                <rect y="6" width="24" height="9" class="t-blu"/>
+                <rect x="6" width="9" height="24" class="t-blu t-trasp"/>
+                <rect y="19" width="24" height="1.5" class="t-rosso"/>
+                <rect x="19" width="1.5" height="24" class="t-rosso"/>
+                <rect y="2" width="24" height=".8" class="t-oro"/>
+                <rect x="2" width=".8" height="24" class="t-oro"/>
+              </pattern>
+            </defs>
+            <path fill="url(#tartan-sottobicchiere)" class="sb-smerlo" d="M100.0 12.0A10.3 10.3 0 0 1 119.6 14.2A10.3 10.3 0 0 1 138.2 20.7A10.3 10.3 0 0 1 154.9 31.2A10.3 10.3 0 0 1 168.8 45.1A10.3 10.3 0 0 1 179.3 61.8A10.3 10.3 0 0 1 185.8 80.4A10.3 10.3 0 0 1 188.0 100.0A10.3 10.3 0 0 1 185.8 119.6A10.3 10.3 0 0 1 179.3 138.2A10.3 10.3 0 0 1 168.8 154.9A10.3 10.3 0 0 1 154.9 168.8A10.3 10.3 0 0 1 138.2 179.3A10.3 10.3 0 0 1 119.6 185.8A10.3 10.3 0 0 1 100.0 188.0A10.3 10.3 0 0 1 80.4 185.8A10.3 10.3 0 0 1 61.8 179.3A10.3 10.3 0 0 1 45.1 168.8A10.3 10.3 0 0 1 31.2 154.9A10.3 10.3 0 0 1 20.7 138.2A10.3 10.3 0 0 1 14.2 119.6A10.3 10.3 0 0 1 12.0 100.0A10.3 10.3 0 0 1 14.2 80.4A10.3 10.3 0 0 1 20.7 61.8A10.3 10.3 0 0 1 31.2 45.1A10.3 10.3 0 0 1 45.1 31.2A10.3 10.3 0 0 1 61.8 20.7A10.3 10.3 0 0 1 80.4 14.2A10.3 10.3 0 0 1 100.0 12.0Z"/>
+            <circle cx="100" cy="100" r="62" class="sb-fondo sb-fondo--notte"/>
+            <circle cx="100" cy="100" r="56" class="sb-filo" fill="none" stroke-width="1.5"/>
+            <text x="100" y="88" class="sb-piccolo sb-piccolo--oro sb-piccolo--stretto">NEW LIVINGSTONE</text>
+            <text x="100" y="120" class="sb-nome sb-nome--oro">Slàinte!</text>
+          </svg>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SERATE: manifesto vittoriano ============ -->
+  <section class="banda serate tessuto-tartan" id="serate" aria-labelledby="titolo-serate">
+    <div class="banda__dentro">
+      <article class="manifesto carta">
+        <svg class="manifesto__angolo manifesto__angolo--a" aria-hidden="true"><use href="#orn-angolo"/></svg>
+        <svg class="manifesto__angolo manifesto__angolo--b" aria-hidden="true"><use href="#orn-angolo"/></svg>
+        <svg class="manifesto__angolo manifesto__angolo--c" aria-hidden="true"><use href="#orn-angolo"/></svg>
+        <svg class="manifesto__angolo manifesto__angolo--d" aria-hidden="true"><use href="#orn-angolo"/></svg>
+        <p class="manifesto__testata">New Livingstone Pub</p>
+        <p class="manifesto__presenta">presenta</p>
+        <div class="manifesto__stelle" aria-hidden="true">
+          <svg><use href="#stella"/></svg><svg><use href="#stella"/></svg><svg><use href="#stella"/></svg>
+        </div>
+        <h2 class="manifesto__titolo" id="titolo-serate">Serate a tema</h2>
+        <p class="manifesto__e">&amp;</p>
+        <p class="manifesto__titolo manifesto__titolo--due">Musica</p>
+        <p class="manifesto__riga">ogni settimana · via Vittorio Aquilino 6 · Troia</p>
+        <hr class="manifesto__filetto">
+        <p class="manifesto__testo">
+          Il programma delle serate lo pubblichiamo su Instagram, insieme alle birre
+          nuove e ai piatti del giorno.
+        </p>
+        <a class="btn btn--inchiostro" href="https://www.instagram.com/newlivingstonepub/" rel="noopener" target="_blank">
+          <svg class="icona" aria-hidden="true"><use href="#i-instagram"/></svg>
+          <span>@newlivingstonepub</span>
+        </a>
+        <p class="manifesto__piede">Dalle ore 19:00 · si fa tardi</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ PRENOTA: il registro ============ -->
+  <section class="banda prenota legno" id="prenota" aria-labelledby="titolo-prenota">
+    <div class="banda__dentro prenota__griglia">
+      <div class="prenota__testo">
+        <p class="occhiello">Prenota</p>
+        <h2 class="titolo-sezione" id="titolo-prenota">Un tavolo per stasera?</h2>
+        <div class="ornamento" aria-hidden="true"><span></span><svg><use href="#cardo"/></svg><span></span></div>
+        <p>
+          Compila il registro: ti prepariamo il messaggio da mandare su WhatsApp.
+          La prenotazione è confermata quando ti rispondiamo.
+        </p>
+        <p class="prenota__telefono">
+          Preferisci chiamare?
+          <a href="tel:+393288994698">
+            <svg class="icona" aria-hidden="true"><use href="#i-telefono"/></svg>
+            <span>328 899 4698</span>
+          </a>
+        </p>
+      </div>
+
+      <form class="registro carta" id="modulo-prenota" novalidate>
+        <p class="registro__testata">Registro delle prenotazioni</p>
+        <div class="campo">
+          <label for="p-nome">Nome</label>
+          <input id="p-nome" name="nome" type="text" autocomplete="name" required>
+        </div>
+        <div class="campi-riga">
+          <div class="campo">
+            <label for="p-giorno">Giorno</label>
+            <input id="p-giorno" name="giorno" type="date" required>
+          </div>
+          <div class="campo">
+            <label for="p-ora">Ora</label>
+            <select id="p-ora" name="ora" required>
+              <option value="19:30">19:30</option>
+              <option value="20:00">20:00</option>
+              <option value="20:30" selected>20:30</option>
+              <option value="21:00">21:00</option>
+              <option value="21:30">21:30</option>
+              <option value="22:00">22:00</option>
+              <option value="22:30">22:30</option>
+              <option value="23:00">23:00</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="p-persone">Persone</label>
+            <select id="p-persone" name="persone" required>
+              <option>1</option><option selected>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option>
+              <option value="più di 8">più di 8</option>
+            </select>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="p-note">Note <span class="facoltativo">(facoltativo)</span></label>
+          <textarea id="p-note" name="note" rows="2" placeholder="Compleanno, seggiolone, partita da vedere…"></textarea>
+        </div>
+        <p class="registro__errore" id="p-errore" role="alert" hidden></p>
+        <button class="btn btn--colata" type="submit"><span>Prepara il messaggio</span></button>
+
+        <div class="riepilogo" id="p-riepilogo" hidden>
+          <p class="riepilogo__titolo">Il messaggio è pronto</p>
+          <pre class="riepilogo__testo" id="p-testo"></pre>
+          <a class="btn btn--inchiostro" id="p-whatsapp" href="https://wa.me/393288994698" rel="noopener" target="_blank">
+            <svg class="icona" aria-hidden="true"><use href="#i-messaggio"/></svg>
+            <span>Invia su WhatsApp</span>
+          </a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ DOVE SIAMO ============ -->
+  <section class="banda dove" id="dove" aria-labelledby="titolo-dove">
+    <div class="banda__dentro dove__griglia">
+      <figure class="mappa carta">
+        <svg viewBox="0 0 320 240" role="img" aria-labelledby="mappa-titolo">
+          <title id="mappa-titolo">Mappa da esploratore, non in scala: la X segna il New Livingstone in via Vittorio Aquilino 6</title>
+          <g class="mappa__inchiostro" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M28 206c30-6 40-30 70-34s46 16 74 6 30-44 60-56 40-10 52-30" stroke-width="2.5" stroke-dasharray="2 8"/>
+            <path d="M40 60l10-16 10 16M58 66l12-20 12 20M200 214l10-16 10 16M218 220l8-12 8 12" stroke-width="2"/>
+            <path d="M120 86c0-8 6-14 14-14s14 6 14 14-6 14-14 14-14-6-14-14ZM134 100v12" stroke-width="2"/>
+            <path d="M152 92c0-6 5-10 10-10s10 4 10 10-5 10-10 10-10-4-10-10ZM162 102v10" stroke-width="2"/>
+            <path d="M256 66l20 20M276 66l-20 20" stroke-width="5" class="mappa__x"/>
+          </g>
+          <g class="mappa__scritte">
+            <text x="108" y="132">Villa Comunale</text>
+            <text x="178" y="108" class="mappa__qui">New Livingstone</text>
+            <text x="14" y="228" class="mappa__corsivo">tu sei qui (più o meno)</text>
+            <text x="160" y="30" class="mappa__latino">HIC SUNT CERVISIAE</text>
+          </g>
+          <g transform="translate(272 168)" class="mappa__rosa">
+            <path d="M0-26 5 0 0 26-5 0Z"/><path d="M-26 0 0-5 26 0 0 5Z" opacity=".55"/>
+            <text x="0" y="-30">N</text>
+          </g>
+        </svg>
+        <figcaption>Mappa non in scala. Per arrivare usa il navigatore.</figcaption>
+      </figure>
+
+      <div class="dove__info">
+        <p class="occhiello">Dove siamo</p>
+        <h2 class="titolo-sezione" id="titolo-dove">Via Vittorio Aquilino 6</h2>
+        <p class="dove__citta">71029 Troia (FG) · centro storico, vicino alla Villa Comunale</p>
+        <div class="dove__azioni">
+          <a class="btn btn--colata" href="https://www.google.com/maps/search/?api=1&amp;query=New+Livingstone+Pub+Via+Vittorio+Aquilino+6+Troia" rel="noopener" target="_blank">
+            <span>Indicazioni stradali</span>
+          </a>
+          <a class="btn btn--filetto" href="tel:+393288994698">
+            <svg class="icona" aria-hidden="true"><use href="#i-telefono"/></svg>
+            <span>328 899 4698</span>
+          </a>
+        </div>
+
+        <table class="orari" id="orari">
+          <caption>Orari di apertura</caption>
+          <tbody>
+            <tr data-giorno="2" data-apre="19:00" data-chiude="01:00"><th scope="row">Martedì</th><td>19:00 – 01:00</td></tr>
+            <tr data-giorno="3" data-apre="19:00" data-chiude="01:00"><th scope="row">Mercoledì</th><td>19:00 – 01:00</td></tr>
+            <tr data-giorno="4" data-apre="19:00" data-chiude="01:00"><th scope="row">Giovedì</th><td>19:00 – 01:00</td></tr>
+            <tr data-giorno="5" data-apre="19:00" data-chiude="01:00"><th scope="row">Venerdì</th><td>19:00 – 01:00</td></tr>
+            <tr data-giorno="6" data-apre="19:00" data-chiude="01:00"><th scope="row">Sabato</th><td>19:00 – 01:00</td></tr>
+            <tr data-giorno="0" data-apre="19:00" data-chiude="01:00"><th scope="row">Domenica</th><td>19:00 – 01:00</td></tr>
+            <tr data-giorno="1" class="orari__chiuso"><th scope="row">Lunedì</th><td>Chiuso</td></tr>
+          </tbody>
+        </table>
+        <p class="stato-riga"><span class="stato" data-stato></span></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="piede legno">
+  <div class="nastro-tartan" aria-hidden="true"></div>
+  <div class="banda__dentro piede__dentro">
+    <div class="piede__marchio">
+      <svg class="piede__cardo" aria-hidden="true"><use href="#cardo"/></svg>
+      <p class="piede__nome">New Livingstone</p>
+      <p class="piede__sotto">Pub · Mo.Ma. Club</p>
+      <p class="piede__brindisi"><span lang="gd">Slàinte mhath!</span> In gaelico scozzese vuol dire «alla salute».</p>
+    </div>
+    <ul class="piede__contatti">
+      <li><svg class="icona" aria-hidden="true"><use href="#i-pin"/></svg><span>Via Vittorio Aquilino 6, 71029 Troia (FG)</span></li>
+      <li><svg class="icona" aria-hidden="true"><use href="#i-telefono"/></svg><a href="tel:+393288994698">328 899 4698</a></li>
+      <li><svg class="icona" aria-hidden="true"><use href="#i-instagram"/></svg><a href="https://www.instagram.com/newlivingstonepub/" rel="noopener" target="_blank">@newlivingstonepub</a></li>
+      <li><svg class="icona" aria-hidden="true"><use href="#i-orologio"/></svg><span>Dalle 19:00 all'01:00, lunedì chiuso</span></li>
+    </ul>
+  </div>
+  <p class="piede__legale banda__dentro">Bevi responsabilmente. Gli alcolici si servono solo ai maggiorenni. © <span data-anno>2026</span> New Livingstone Pub</p>
+</footer>
+
+</body>
+</html>
